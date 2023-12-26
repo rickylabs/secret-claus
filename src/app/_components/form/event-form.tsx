@@ -6,7 +6,7 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import * as z from "zod";
 import {CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/app/_components/ui/card";
 import {Button} from "@/app/_components/ui/button";
-import {type Tables} from "@/server/db/supabase";
+import {Cookie, type Table, type Tables} from "@/server/db/supabase";
 import {createEvent} from "@/app/actions/create-event";
 import {Form,} from "@/app/_components/ui/form";
 import TextField from "@/app/_components/form/fields/text-field";
@@ -14,6 +14,7 @@ import SelectField from "@/app/_components/form/fields/select-field";
 import InputField from "@/app/_components/form/fields/input-field";
 import Link from "next/link";
 import {Loader2} from "lucide-react";
+import {fetchEvent} from "@/lib/supabase";
 
 export const eventFormSchema = z.object({
     title: z.string().min(3),
@@ -22,6 +23,15 @@ export const eventFormSchema = z.object({
     gift_amount: z.string(),
     event_date: z.string()
 });
+
+async function retrieveCachedEvent(sessionEventId: Tables<'event'>["id"]){
+    const { data } = await fetchEvent(sessionEventId)
+    if(data?.length > 0){
+        return data?.[0]
+    } else {
+        return null
+    }
+}
 
 
 export type EventFormFields = z.infer<typeof eventFormSchema>;
@@ -33,19 +43,29 @@ export function EventForm() {
     const {
         formState: { isLoading, isSubmitting },
     } = form
-    const [eventId, setEventId] = React.useState<Tables<'event'>["id"] | null>(null)
+    const [event, setEvent] = React.useState<Tables<'event'> | null>(null)
     const control = form.control as unknown as Control
 
+    console.log(event)
+
     useEffect(() => {
-        if(!eventId){
+        if(!event?.id){
             const sessionEventId = sessionStorage.getItem("event_id") as Tables<'event'>["id"] | undefined
             if(sessionEventId){
-                setEventId(sessionEventId)
+                retrieveCachedEvent(sessionEventId)
+                    .then((event) => {
+                        if(event){
+                            setEvent(event)
+                        }
+                    })
+                    .catch((e) => {
+                        console.error(e)
+                    })
             }
         }
-    }, [eventId])
+    }, [event])
 
-    if(eventId){
+    if(event){
         return (
             <>
                 <CardHeader>
@@ -54,14 +74,33 @@ export function EventForm() {
                         La prochaine étape consiste à ajouter vos participants.
                     </CardDescription>
                 </CardHeader>
-                <CardContent className="bg-white p-6 rounded-lg space-y-4">
-                    <Link href={`/events/${eventId}/people`} prefetch>
-                        <Button className="bg-red-800 dark:bg-red-950">Ajouter des participants</Button>
-                    </Link>
-
-                    <Link href={`/events/${eventId}`} prefetch>
-                        <Button className="bg-red-800 dark:bg-red-950">Consulter mon évènement</Button>
-                    </Link>
+                <CardContent className="bg-white p-4 rounded-lg space-y-4 text-red-950">
+                    <p>Vous souhaitez créer un autre évènement ?
+                        <u
+                            className={"font-bold text-red-800 hover:text-red-950 cursor-pointer ml-2"}
+                            onClick={() => {
+                                sessionStorage.removeItem("event_id")
+                                setEvent(null)
+                            }}
+                        >Nouvel évènement</u>
+                    </p>
+                    <CardFooter className="flex justify-between pt-4 pb-0 px-0">
+                        <Link href={`/events/${event.id}`} prefetch>
+                            <Button
+                                variant={"outline"}
+                                className="bg-white/20 hover:bg-red-800 hover:text-white border-md hover:border-none shadow-none hover:shadow-md"
+                            >
+                                Consulter mon évènement
+                            </Button>
+                        </Link>
+                        <Link href={`/events/${event.id}/people`} prefetch>
+                            <Button
+                                className="bg-green-600 hover:bg-green-800 text-white shadow-none hover:shadow-md"
+                            >
+                                Ajouter des participants
+                            </Button>
+                        </Link>
+                    </CardFooter>
                 </CardContent>
             </>
         )
@@ -80,7 +119,7 @@ export function EventForm() {
                         const payload = await createEvent(data);
                         if(payload) {
                             sessionStorage.setItem("event_id", payload.id)
-                            setEventId(payload.id)
+                            setEvent(payload)
                         }
                     } catch (e) {
                         console.error(e);
@@ -101,6 +140,16 @@ export function EventForm() {
                                     label={"Titre"}
                                     placeholder={"Votre évènement"}
                                     message={"Le titre est obligatoire"}
+                                />
+                            </div>
+                            <div className="flex flex-col space-y-1.5">
+                                <InputField
+                                    control={control}
+                                    name={"event_date"}
+                                    label={"Date de l'évènement"}
+                                    placeholder={new Date().toLocaleDateString()}
+                                    message={"La date est obligatoire"}
+                                    type={"date"}
                                 />
                             </div>
                             <div className="flex flex-col space-y-1.5">
@@ -147,26 +196,16 @@ export function EventForm() {
                                     description={"Ce message sera communiqué à vos invités"}
                                 />
                             </div>
+                            <Button
+                                disabled={isLoading}
+                                className="bg-green-600 hover:bg-green-800 text-white shadow-none hover:shadow-md"
+                                type="submit"
+                            >
+                                {(isLoading || isSubmitting) && <Loader2 className="mr-2 h-4 w-4 animate-spin"/>}
+                                {(isLoading || isSubmitting) ? "Veuillez Patienter.." : "Créer mon évènement"}
+                            </Button>
                         </div>
                     </CardContent>
-                    <CardFooter className="flex justify-between pt-4 pb-0 px-0">
-                        <Link href={"/"}>
-                            <Button
-                                className="bg-white/20 hover:bg-red-800 hover:border-none shadow-none hover:shadow-md"
-                                disabled={isLoading}
-                            >
-                                Retour
-                            </Button>
-                        </Link>
-                        <Button
-                            disabled={isLoading}
-                            className="bg-green-600 hover:bg-green-800 text-white shadow-none hover:shadow-md"
-                            type="submit"
-                        >
-                            {(isLoading || isSubmitting) && <Loader2 className="mr-2 h-4 w-4 animate-spin"/>}
-                            {(isLoading || isSubmitting) ? "Veuillez Patienter.." : "Créer"}
-                        </Button>
-                    </CardFooter>
                 </>
             </form>
         </Form>

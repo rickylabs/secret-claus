@@ -34,7 +34,7 @@ export default async function RootLayout({
       <body className={`font-sans ${inter.variable} bg-gradient-to-b from-red-950 to-red-800 text-white`}>
       <TRPCReactProvider cookies={cookieStore.toString()}>
         <Navigation event={event}/>
-        <main className="flex min-h-screen flex-col items-center justify-center ">
+        <main className="flex min-h-screen flex-col items-center">
           <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 relative z-10">
             <h1 className="text-5xl font-extrabold tracking-tight sm:text-[5rem]">
               Secret <span className="text-red-300">Claus</span>
