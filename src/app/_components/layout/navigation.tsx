@@ -31,7 +31,7 @@ export const Navigation = ({event}: NavigationProps) => {
                     </Link>
                 </MenubarMenu>
                 <MenubarMenu>
-                    <MenubarTrigger>Évènements</MenubarTrigger>
+                    <MenubarTrigger className={`${pathname.includes("/events") ? "font-bold": ""}`}>Évènements</MenubarTrigger>
                     <MenubarContent>
                         <Link href={"/events"} className={`${pathname === "/events" ? "font-bold": ""}`}>
                             <MenubarItem>

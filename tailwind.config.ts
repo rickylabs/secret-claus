@@ -8,6 +8,9 @@ export default {
       fontFamily: {
         sans: ["var(--font-sans)", ...fontFamily.sans],
       },
+      colors: {
+        'santa-white': '#FFFBF2',
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],

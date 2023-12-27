@@ -16,7 +16,7 @@ const inter = Inter({
 export const metadata = {
   title: "Secret Claus",
   description: "Get a surprise gift from a random person in your group!",
-  icons: [{ rel: "icon", url: "/favicon.ico" }],
+  icons: [{ rel: "icon", url: "/favicon.png" }],
 };
 
 export default async function RootLayout({
