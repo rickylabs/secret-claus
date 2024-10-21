@@ -1,22 +1,22 @@
-'use client'
+"use client";
 import {
-    Menubar,
-    MenubarContent,
-    MenubarItem,
-    MenubarMenu,
-    MenubarSeparator,
-    MenubarShortcut,
-    MenubarSub,
-    MenubarSubContent,
-    MenubarSubTrigger,
-    MenubarTrigger,
-} from "@/app/_components/ui/menubar"
+  Menubar,
+  MenubarContent,
+  MenubarItem,
+  MenubarMenu,
+  MenubarSeparator,
+  MenubarShortcut,
+  MenubarSub,
+  MenubarSubContent,
+  MenubarSubTrigger,
+  MenubarTrigger,
+} from "@/app/_components/ui/menubar";
 import Link from "next/link";
-import {usePathname} from 'next/navigation'
-import type {Table, Tables} from "@/server/db/supabase";
+import { usePathname } from "next/navigation";
+import type { Table, Tables } from "@/server/db/supabase";
 
 interface NavigationProps {
-    event?: Tables<Table.Event>
+  event?: Tables<Table.Event>;
 }
 
 export const Navigation = ({event}: NavigationProps) => {
@@ -49,7 +49,7 @@ export const Navigation = ({event}: NavigationProps) => {
                                 <MenubarSub>
                                     <MenubarSubTrigger className={`${pathname.includes("/events/" + event.id) ? "font-bold": ""}`}>{event.title}</MenubarSubTrigger>
                                     <MenubarSubContent>
-                                        <Link href={`/events/${event.id}`}>
+                                        <Link href={`/events/${event.id}/edit`}>
                                             <MenubarItem>Modifier</MenubarItem>
                                         </Link>
                                         <Link href={`/events/${event.id}/people#list`}>

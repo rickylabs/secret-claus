@@ -1,42 +1,59 @@
-import {fetchPairing, fetchPairingByEvent} from "@/lib/supabase";
-import type {Table, Tables} from "@/server/db/supabase";
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/app/_components/ui/card";
-import {PairingForm} from "@/app/_components/form/pairing-form";
-import {SantaAvatar} from "@/app/_components/atoms/avatar";
-import {EventDetails} from "@/app/_components/atoms/event-details";
-import {SecretGuest} from "@/app/_components/form/password-form";
-import {PasswordProvider} from "@/context/password-context";
+import { fetchPairing, fetchPairingByEvent } from "@/lib/supabase";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/app/_components/ui/card";
+import { PairingForm } from "@/app/_components/form/pairing-form";
+import { SantaAvatar } from "@/app/_components/atoms/avatar";
+import { EventDetails } from "@/app/_components/atoms/event-details";
+import { SecretGuest } from "@/app/_components/form/password-form";
+import { PasswordProvider } from "@/context/password-context";
+import { type Tables } from "@/types/supabase";
+import { type Table } from "@/server/db/supabase";
 
 export interface PairingExtended extends Tables<Table.Pairing> {
-    event: Tables<Table.Event> | null
-    giver: Tables<Table.Person> | null
-    receiver: Tables<Table.Person> | null
+  event: Tables<Table.Event> | null;
+  giver: Tables<Table.Person> | null;
+  receiver: Tables<Table.Person> | null;
 }
 export default async function Pairing({ params }: { params: { id: string, pairing_id: string } }) {
     const { data:pairingPayload } = await fetchPairing(params?.pairing_id)
     const { data:participants } = await fetchPairingByEvent(params?.id)
     const pairing: Partial<PairingExtended> | undefined  = pairingPayload?.[0]
-    const giver = pairing?.giver;
-    const event = pairing?.event;
-    const people = participants?.filter(payload => payload.giver.id !== giver.id)
-        .map(payload => {
-            return {
-                item_value: payload.giver.id,
-                item_label: payload.giver.name
-            }
-        })
 
     if (!pairing) {
         return <div>Not Found</div>
     }
 
-    if (!event) {
+    if (!pairing.event) {
         return <div>Not Event Found</div>
     }
 
-    if (!giver) {
+    if (!pairing.giver) {
         return <div>Not Giver Found</div>
     }
+
+    if (!participants?.length) {
+        return <div>No participants found</div>
+    }
+
+    const giver = pairing.giver;
+    const event = pairing.event;
+    const people = participants.filter(payload =>
+        //@ts-expect-error: Type 'Tables<Table.Person>' is not assignable to type 'PersonItemProps'.
+        payload.giver.id !== giver.id
+    )
+        .map(payload => {
+            return {
+                //@ts-expect-error: Type 'Tables<Table.Person>' is not assignable to type 'PersonItemProps'.
+                item_value: payload.giver.id,
+                //@ts-expect-error: Type 'Tables<Table.Person>' is not assignable to type 'PersonItemProps'.
+                item_label: payload.giver.name
+            }
+        })
 
     return (
         <Card className="backdrop-blur-sm bg-white/10 dark:bg-grey-700/10 p-2 md:p-8 rounded-lg shadow-lg space-y-4 border-none w-full pb-6">
@@ -59,7 +76,7 @@ export default async function Pairing({ params }: { params: { id: string, pairin
                         <div className="text-md italic text-red-950">
                             {`Une fois généré, votre invité secret ne pourra être consulté qu'une seule fois. N'oublier pas d'enregistrer votre participant ou vous enregistrer avant de quitter la page.`}
                         </div>
-                        <PairingForm pairing={pairing} people={people} allowedExclusions={giver.allow_exclusion}/>
+                        <PairingForm pairing={pairing} people={people}/>
                     </>
                 }
             </CardContent>

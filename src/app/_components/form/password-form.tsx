@@ -1,25 +1,24 @@
-'use client'
-import React from 'react';
-import {type Control, type SubmitHandler, useForm} from 'react-hook-form';
-import {zodResolver} from "@hookform/resolvers/zod";
-import {type Table, type Tables} from "@/server/db/supabase";
-import {z} from "zod";
-import {Form} from "@/app/_components/ui/form";
-import {toast} from "@/app/_components/ui/use-toast";
-import {Button} from "@/app/_components/ui/button";
+"use client";
+import React from "react";
+import { type Control, type SubmitHandler, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Form } from "@/app/_components/ui/form";
+import { toast } from "@/app/_components/ui/use-toast";
+import { Button } from "@/app/_components/ui/button";
 import PasswordField from "@/app/_components/form/fields/password-field";
-import {usePasswordContext} from "@/context/password-context";
-import {SantaAvatar} from "@/app/_components/atoms/avatar";
-import {type PairingExtended} from "@/app/events/[id]/pairing/[pairing_id]/page";
+import { usePasswordContext } from "@/context/password-context";
+import { SantaAvatar } from "@/app/_components/atoms/avatar";
+import { type PairingExtended } from "@/app/events/[id]/pairing/[pairing_id]/page";
 
 const passwordFormSchema = z.object({
-    password: z.string().min(3),
+  password: z.string().min(3),
 });
 
 type PasswordFormFields = z.infer<typeof passwordFormSchema>;
 
 type PasswordFormProps = {
-    pairing: PairingExtended;
+    pairing: Partial<PairingExtended>;
 };
 
 export const PasswordForm: React.FC<PasswordFormProps> = ({ pairing }) => {
@@ -46,13 +45,13 @@ export const PasswordForm: React.FC<PasswordFormProps> = ({ pairing }) => {
         }
     }, [isValid, isSubmitted])
 
-    const onSubmit: SubmitHandler<PasswordFormFields> = ({password}) => {
-        checkPassword(password, pairing.password);
-        return
-    }
-
     if(!pairing.password){
         return <div>Not Found</div>
+    }
+
+    const onSubmit: SubmitHandler<PasswordFormFields> = ({password}) => {
+        checkPassword(password, pairing.password!);
+        return
     }
 
     return (
@@ -94,6 +93,10 @@ export const SecretGuest: React.FC<PasswordFormProps> = ({ pairing }) => {
             })
         }
     }, [isValid])
+
+    if(!receiver){
+        return <div>Not Found</div>
+    }
 
     return (
         <>

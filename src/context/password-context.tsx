@@ -1,16 +1,16 @@
-'use client'
-import React, {createContext, useContext, useState} from 'react';
-import {compareSync} from 'bcrypt-ts';
+"use client";
+import React, { createContext, useContext, useState } from "react";
+import { compareSync } from "bcrypt-ts";
 
 type PasswordContextType = {
-    isValid: boolean;
-    checkPassword: (password: string, hashedPassword: string) => void;
-    reset: () => void;
+  isValid: boolean;
+  checkPassword: (password: string, hashedPassword: string) => void;
+  reset: () => void;
 };
 
 export const PasswordContext = createContext<PasswordContextType | undefined>(undefined);
 
-export const PasswordProvider: React.FC = ({ children }) => {
+export const PasswordProvider = ({ children }: {children: React.ReactNode}) => {
     const [isValid, setIsValid] = useState(false);
 
     const checkPassword = (password: string, hashedPassword: string) => {

@@ -1,12 +1,12 @@
 import "@/styles/globals.css";
-import {Inter} from "next/font/google";
-import {cookies} from "next/headers";
-import {TRPCReactProvider} from "@/trpc/react";
-import {ChristmasSnow} from "@/app/_components/atoms/snowfall";
-import {Toaster} from "@/app/_components/ui/toaster";
-import {Navigation} from "@/app/_components/layout/navigation";
-import {Cookie, type Table, type Tables} from "@/server/db/supabase";
-import {fetchEvent} from "@/lib/supabase";
+import { Inter } from "next/font/google";
+import { cookies } from "next/headers";
+import { TRPCReactProvider } from "@/trpc/react";
+import { ChristmasSnow } from "@/app/_components/atoms/snowfall";
+import { Toaster } from "@/app/_components/ui/toaster";
+import { Navigation } from "@/app/_components/layout/navigation";
+import { Cookie, type Table, type Tables } from "@/server/db/supabase";
+import { fetchEvent } from "@/lib/supabase";
 
 const inter = Inter({
   subsets: ["latin"],

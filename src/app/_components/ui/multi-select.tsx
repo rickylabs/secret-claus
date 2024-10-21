@@ -1,26 +1,38 @@
-import * as React from 'react'
-import {cn} from "@/lib/utils"
+"use client";
+import * as React from "react";
+import { cn } from "@/lib/utils";
 
-import {Check, ChevronsUpDown, X} from "lucide-react"
-import {Button} from "@/app/_components/ui/button"
-import {Command, CommandEmpty, CommandGroup, CommandInput, CommandItem,} from "@/app/_components/ui/command"
-import {Popover, PopoverContent, PopoverTrigger,} from "@/app/_components/ui/popover"
-import {Badge} from "@/app/_components/ui/badge";
-
+import { Check, ChevronsUpDown, X } from "lucide-react";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from "@/app/_components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/app/_components/ui/popover";
+import { Badge } from "@/app/_components/ui/badge";
 
 export type OptionType = {
-    label: string;
-    value: string;
-}
+  label: string;
+  value: string;
+  disabled?: boolean | string;
+};
 
 interface MultiSelectProps {
     options: OptionType[];
     selected: string[];
-    onChange: React.Dispatch<React.SetStateAction<string[]>>;
+    onChange: (value: string[]) => void;
+    placeholder?: string | React.ReactNode;
     className?: string;
+    disabled?: boolean;
 }
 
-function MultiSelect({ options, selected, onChange, className, ...props }: MultiSelectProps) {
+function MultiSelect({ options, selected, onChange, placeholder, className, disabled, ...props }: MultiSelectProps) {
 
     const [open, setOpen] = React.useState(false)
 
@@ -30,43 +42,46 @@ function MultiSelect({ options, selected, onChange, className, ...props }: Multi
 
     return (
         <Popover open={open} onOpenChange={setOpen} {...props}>
-            <PopoverTrigger asChild>
-                <Button
-                    variant="outline"
-                    role="combobox"
+            <PopoverTrigger asChild disabled={disabled}>
+                <div
                     aria-expanded={open}
-                    className={`w-full justify-between ${selected.length > 1 ? "h-full" : "h-10"}`}
+                    className={`flex items-center gap-1 flex-wrap text-gray-500 w-[250px] border-zinc-300 justify-between ${selected.length > 1 ? "h-full" : "h-10"} rounded-md border border-zinc-300 p-2`}
                     onClick={() => setOpen(!open)}
                 >
-                    <div className="flex gap-1 flex-wrap">
-                        {selected.map((item) => (
-                            <Badge
+                        {selected?.map((item) => {
+                            return (
+                              <Badge
                                 variant="secondary"
                                 key={item}
-                                className="mr-1 mb-1"
+                                className={"mb-1 mr-1"}
                                 onClick={() => handleUnselect(item)}
-                            >
-                                {options.find((option) => option.value === item)?.label}
+                              >
+                                {
+                                  options.find(
+                                    (option) => option.value === item,
+                                  )?.label
+                                }
                                 <button
-                                    className="ml-1 ring-offset-background rounded-full outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                                    onKeyDown={(e) => {
-                                        if (e.key === "Enter") {
-                                            handleUnselect(item);
-                                        }
-                                    }}
-                                    onMouseDown={(e) => {
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                    }}
-                                    onClick={() => handleUnselect(item)}
+                                  className="ring-offset-background focus:ring-ring ml-1 rounded-full outline-none focus:ring-2 focus:ring-offset-2"
+                                  onKeyDown={(e) => {
+                                    if (e.key === "Enter") {
+                                      handleUnselect(item);
+                                    }
+                                  }}
+                                  onMouseDown={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                  }}
+                                  onClick={() => handleUnselect(item)}
                                 >
-                                    <X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
+                                  <X className="text-muted-foreground hover:text-foreground h-3 w-3" />
                                 </button>
-                            </Badge>
-                        ))}
-                    </div>
+                              </Badge>
+                            );
+                        })}
+                        <div className={cn("ml-auto mr-auto", selected.length > 0 ? "hidden" : "visible")}>{placeholder ?? "Select"}</div>
                     <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
-                </Button>
+                </div>
             </PopoverTrigger>
             <PopoverContent className="w-full p-0">
                 <Command className={className}>
@@ -76,6 +91,7 @@ function MultiSelect({ options, selected, onChange, className, ...props }: Multi
                         {options.map((option) => (
                             <CommandItem
                                 key={option.value}
+                                disabled={!!option.disabled}
                                 onSelect={() => {
                                     onChange(
                                         selected.includes(option.value)
@@ -92,7 +108,7 @@ function MultiSelect({ options, selected, onChange, className, ...props }: Multi
                                             "opacity-100" : "opacity-0"
                                     )}
                                 />
-                                {option.label}
+                                {`${option.label} ${option.disabled ? (typeof option.disabled === "string" ? "(" + option.disabled + ")": "(indisponible)") : ""}`}
                             </CommandItem>
                         ))}
                     </CommandGroup>

@@ -1,14 +1,17 @@
-import {drizzle} from "drizzle-orm/node-postgres";
-import {client} from "@/server/db/client";
-import {event, pairing, pairingRelation, person} from "@/server/db/schema";
+import { client } from "@/server/db/client";
+//import {event, exclusion, pairing, pairingRelation, person} from "@/server/db/schema";
+import { drizzle } from "drizzle-orm/postgres-js";
 
-await client.connect();
-export const db = drizzle(client,
+export const db = drizzle(client);
+
+
+/*export const db = drizzle(client,
     {
         schema: {
             person,
             event,
             pairing,
-            pairingRelation
+            pairingRelation,
+            exclusion
         }
-    })
+    })*/

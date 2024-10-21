@@ -1,16 +1,20 @@
-import {Cookie, type Table, type Tables} from "@/server/db/supabase";
-import {cookies} from "next/headers";
-import {Button} from "@/app/_components/ui/button";
+import { Cookie, type Table, type Tables } from "@/server/db/supabase";
+import { cookies } from "next/headers";
+import { Button } from "@/app/_components/ui/button";
 import Link from "next/link";
-import {fetchEvent} from "@/lib/supabase";
-import {Card, CardHeader} from "@/app/_components/ui/card";
-import {IntroStep} from "@/app/_components/atoms/intro-step";
+import { fetchEvent } from "@/lib/supabase";
+import { Card, CardHeader } from "@/app/_components/ui/card";
+import { IntroStep } from "@/app/_components/atoms/intro-step";
 import React from "react";
-import {CalendarPlus, EyeIcon, Share2, UserPlus} from "lucide-react";
-import {CalendarIcon} from "@radix-ui/react-icons";
-import {Alert, AlertDescription, AlertTitle} from "@/app/_components/ui/alert";
+import { CalendarPlus, EyeIcon, Share2, UserPlus } from "lucide-react";
+import { CalendarIcon } from "@radix-ui/react-icons";
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from "@/app/_components/ui/alert";
 
-export const revalidate = 60 //revalidate the data at most: every minute
+export const revalidate = 60; //revalidate the data at most: every minute
 
 export default async function Home() {
     const cookieStore = cookies()

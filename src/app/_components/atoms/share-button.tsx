@@ -1,17 +1,18 @@
-'use client'
-import React from 'react';
-import {Button} from "@/app/_components/ui/button";
-import {Share2} from "lucide-react";
-import {toast} from "@/app/_components/ui/use-toast";
+"use client";
+import React from "react";
+import { Button } from "@/app/_components/ui/button";
+import { Share2 } from "lucide-react";
+import { toast } from "@/app/_components/ui/use-toast";
 
 type ShareButtonProps = {
-    link?: string | null | undefined,
-    title?: string,
-    description?: string
-    isExternal?: boolean
-    customIcon?: React.ReactNode
-}
-const ShareButton = ({link, title, description, isExternal}: ShareButtonProps) => {//ToDO: create redirect for /blog/topic/[article] to /blog/article
+  link?: string | null | undefined;
+  title?: string;
+  description?: string;
+  isExternal?: boolean;
+  customIcon?: React.ReactNode;
+  disabled?: boolean;
+};
+const ShareButton = ({link, title, description, isExternal, disabled}: ShareButtonProps) => {//ToDO: create redirect for /blog/topic/[article] to /blog/article
 
     const handleShare = () => {
         const seoDescription = document.querySelector("meta[property='og:description']")?.getAttribute("content");
@@ -61,15 +62,16 @@ const ShareButton = ({link, title, description, isExternal}: ShareButtonProps) =
         <>
             <Button
                 onClick={() => {
-                    toast({
-                        variant: "destructive",
-                        title: "Uh oh! Something went wrong.",
-                        description: "There was a problem with your request.",
-                    })
-                    handleShare()
+                        toast({
+                            variant: "destructive",
+                            title: "Uh oh! Something went wrong.",
+                            description: "There was a problem with your request.",
+                        })
+                        handleShare()
 
+                    }
                 }
-                }
+                disabled={!!disabled}
                 variant="outline"
                 className="hover:bg-green-800 text-white p-1 flex justify-center text-green-600 w-10 md:w-20 hover:text-inherit border-md border-green-100 hover:border-none shadow-none hover:shadow-md"
             >

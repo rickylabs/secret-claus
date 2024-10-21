@@ -1,17 +1,29 @@
 import * as React from "react";
-import {type HTMLInputTypeAttribute} from "react";
-import {FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from "@/app/_components/ui/form";
-import {type Control, type FieldName, type FieldValues, type RegisterOptions} from "react-hook-form";
-import {Input} from "@/app/_components/ui/input";
+import { type HTMLInputTypeAttribute } from "react";
+import {
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/app/_components/ui/form";
+import {
+  type Control,
+  type FieldName,
+  type FieldValues,
+  type RegisterOptions,
+} from "react-hook-form";
+import { Input } from "@/app/_components/ui/input";
 
 export interface DefaultFieldProps {
-    control: Control,
-    name: FieldName<FieldValues>
-    label?: string
-    placeholder?: string
-    description?: string
-    message?: string
-    options?: RegisterOptions
+  control: Control;
+  name: FieldName<FieldValues>;
+  label?: string;
+  placeholder?: string;
+  description?: string;
+  message?: string;
+  options?: RegisterOptions;
 }
 
 type InputFieldProps = DefaultFieldProps & {

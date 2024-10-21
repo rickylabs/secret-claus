@@ -1,14 +1,22 @@
-import {Button} from "@/app/_components/ui/button";
+import { Button } from "@/app/_components/ui/button";
 import React from "react";
 
 type ButtonProps = {
-    onClick: () => void,
-    variant?: "default" | "link" | "destructive" | "outline" | "secondary" | "ghost" | null | undefined,
-    className: string,
-    startIcon?: React.ReactNode,
-    endIcon?: React.ReactNode,
-    text?: string
-}
+  onClick: () => void;
+  variant?:
+    | "default"
+    | "link"
+    | "destructive"
+    | "outline"
+    | "secondary"
+    | "ghost"
+    | null
+    | undefined;
+  className: string;
+  startIcon?: React.ReactNode;
+  endIcon?: React.ReactNode;
+  text?: string;
+};
 
 const IconButton: React.FC<ButtonProps> = ({ onClick, variant, className, startIcon, endIcon, text }) => {
     return (

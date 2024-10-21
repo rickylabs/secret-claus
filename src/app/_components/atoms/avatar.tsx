@@ -1,19 +1,23 @@
-"use client"
+"use client";
 import * as React from "react";
-import {Avatar, AvatarFallback, AvatarImage} from "@/app/_components/ui/avatar";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/app/_components/ui/avatar";
 import Image from "next/image";
 
 function getInitials(name: string): string {
-    const words = name.trim().split(/\s+/);
-    if(words.length && words[0]){
-        if (words.length === 1) {
-            return words[0] ? words[0].substring(0, 2).toUpperCase() : "";
-        } else {
-            const second = words[words.length - 1]?.charAt(0)
-            return words[0].charAt(0).toUpperCase() + second?.toUpperCase();
-        }
+  const words = name.trim().split(/\s+/);
+  if (words.length && words[0]) {
+    if (words.length === 1) {
+      return words[0] ? words[0].substring(0, 2).toUpperCase() : "";
+    } else {
+      const second = words[words.length - 1]?.charAt(0);
+      return words[0].charAt(0).toUpperCase() + second?.toUpperCase();
     }
-    return ''
+  }
+  return "";
 }
 
 interface SantaAvatarProps {

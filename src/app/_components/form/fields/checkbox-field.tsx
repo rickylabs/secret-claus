@@ -1,11 +1,18 @@
 import * as React from "react";
-import {FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from "@/app/_components/ui/form";
-import {type DefaultFieldProps} from "@/app/_components/form/fields/input-field";
-import {Checkbox} from "@/app/_components/ui/checkbox";
+import {
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/app/_components/ui/form";
+import { type DefaultFieldProps } from "@/app/_components/form/fields/input-field";
+import { Checkbox } from "@/app/_components/ui/checkbox";
 
 type CheckboxFieldProps = DefaultFieldProps & {
-    defaultValue?: boolean
-}
+  defaultValue?: boolean;
+};
 const CheckboxField = ({control, name, label, defaultValue, description}: CheckboxFieldProps) => {
   return (
       <FormField

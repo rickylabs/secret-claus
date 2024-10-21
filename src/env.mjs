@@ -1,5 +1,5 @@
-import {createEnv} from "@t3-oss/env-nextjs";
-import {z} from "zod";
+import { createEnv } from "@t3-oss/env-nextjs";
+import { z } from "zod";
 
 export const env = createEnv({
   /**
@@ -7,34 +7,33 @@ export const env = createEnv({
    * isn't built with invalid env vars.
    */
   server: {
-    DATABASE_HOST: z
-        .string()
-        .refine(
-            (str) => !str.includes("YOUR_PG_URL_HERE"),
-            "You forgot to change the default URL"
-        ),
+    DATABASE_URL: z
+      .string()
+      .refine(
+        (str) => !str.includes("YOUR_PG_URL_HERE"),
+        "You forgot to change the default URL",
+      ),
     DATABASE_PASSWORD: z
-        .string()
-        .refine(
-            (str) => !str.includes("YOUR_PG_PWD_HERE"),
-            "You forgot to add a pswd"
-        ),
+      .string()
+      .refine(
+        (str) => !str.includes("YOUR_PG_PWD_HERE"),
+        "You forgot to change the default PWD",
+      ),
     NODE_ENV: z
-        .enum(["development", "test", "production"])
-        .default("development"),
+      .enum(["development", "test", "production"])
+      .default("development"),
     SUPABASE_URL: z
-        .string()
-        .refine(
-            (str) => !str.includes("YOUR_PG_PWD_HERE"),
-          "You forgot to add a pswd"
-        ),
+      .string()
+      .refine(
+        (str) => !str.includes("YOUR_PG_PWD_HERE"),
+        "You forgot to add a pswd",
+      ),
     SUPABASE_ANON_KEY: z
-        .string()
-        .refine(
-            (str) => !str.includes("YOUR_PG_PWD_HERE"),
-          "You forgot to add a pswd"
-        ),
-
+      .string()
+      .refine(
+        (str) => !str.includes("YOUR_PG_PWD_HERE"),
+        "You forgot to add a pswd",
+      ),
   },
 
   /**
@@ -45,17 +44,17 @@ export const env = createEnv({
   client: {
     // NEXT_PUBLIC_CLIENTVAR: z.string(),
     NEXT_PUBLIC_SUPABASE_URL: z
-        .string()
-        .refine(
-            (str) => !str.includes("YOUR_PG_PWD_HERE"),
-            "You forgot to add a pswd"
-        ),
+      .string()
+      .refine(
+        (str) => !str.includes("YOUR_PG_PWD_HERE"),
+        "You forgot to add a pswd",
+      ),
     NEXT_PUBLIC_SUPABASE_ANON_KEY: z
-        .string()
-        .refine(
-            (str) => !str.includes("YOUR_PG_PWD_HERE"),
-            "You forgot to add a pswd"
-        ),
+      .string()
+      .refine(
+        (str) => !str.includes("YOUR_PG_PWD_HERE"),
+        "You forgot to add a pswd",
+      ),
   },
 
   /**
@@ -63,13 +62,13 @@ export const env = createEnv({
    * middlewares) or client-side so we need to destruct manually.
    */
   runtimeEnv: {
-    DATABASE_HOST: process.env.DATABASE_HOST,
+    DATABASE_URL: process.env.DATABASE_URL,
     DATABASE_PASSWORD: process.env.DATABASE_PASSWORD,
     NODE_ENV: process.env.NODE_ENV,
     SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
-    NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
   /**

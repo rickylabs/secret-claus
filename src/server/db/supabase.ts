@@ -1,20 +1,20 @@
-import {env} from '@/env.mjs'
-import {createClient, type PostgrestError} from '@supabase/supabase-js'
-import {type Database} from "@/types/supabase";
+import { env } from "@/env.mjs";
+import { createClient, type PostgrestError } from "@supabase/supabase-js";
+import { type Database } from "@/types/supabase";
 
 const options = {
-    db: {
-        //schema: 'public',
-    },
-    auth: {
-        //autoRefreshToken: true,
-        //persistSession: true,
-        //detectSessionInUrl: true
-    },
-    global: {
-        //headers: { 'x-my-custom-header': 'my-app-name' },
-    },
-}
+  db: {
+    //schema: 'public',
+  },
+  auth: {
+    //autoRefreshToken: true,
+    //persistSession: true,
+    //detectSessionInUrl: true
+  },
+  global: {
+    //headers: { 'x-my-custom-header': 'my-app-name' },
+  },
+};
 
 export type DbResult<T> = T extends PromiseLike<infer U> ? U : T
 export type DbResultOk<T> = T extends PromiseLike<{ data: infer U }> ? Exclude<U, null> : T
@@ -26,6 +26,7 @@ export enum Table {
     Event = 'event',
     Pairing = 'pairing',
     Person = 'person',
+    Exclusion = 'exclusion',
 }
 
 export enum Cookie {

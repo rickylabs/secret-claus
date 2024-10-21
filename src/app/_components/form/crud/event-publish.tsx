@@ -4,20 +4,16 @@ import { Button } from "@/app/_components/ui/button";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { Form } from "@/app/_components/ui/form";
-import { Loader2, UserMinus } from "lucide-react";
-import { removePerson } from "@/app/actions/remove-person";
+import {Loader2, RadioTower} from "lucide-react";
 import { toast } from "@/app/_components/ui/use-toast";
+import {type Tables} from "@/types/supabase";
+import {type Table} from "@/server/db/supabase";
+import {publishEvent} from "@/app/actions/publish-event";
 
-export function PersonRemoval({
-  eventId,
-  personId,
-  name,
-  disabled
+export function PublishEvent({
+  event,
 }: {
-  eventId: string;
-  personId: string;
-  name?: string;
-  disabled?: boolean;
+  event: Tables<Table.Event>;
 }) {
   const form = useForm();
   const {
@@ -34,30 +30,38 @@ export function PersonRemoval({
           action={form.handleSubmit(async () => {
             try {
               // Call the function to remove the person
-              const payload = await removePerson(eventId, personId);
+              await publishEvent(event.id);
               router.refresh();
               toast({
                 variant: "informative",
-                title: name
-                  ? `${name} a été supprimé de la liste des invités.`
-                  : "invité supprimé avec succès.",
+                title: event.title
+                  ? `L'évènement "${event.title}" a été publié !`
+                  : "une erreur est sruvenue.",
               });
             } catch (e) {
               console.error(e);
+              // @ts-expect-error: e.message is not assignable
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+              const message = e.message
+              toast({
+                variant: "destructive",
+                title: "Une erreur est sruvenue.",
+                description: `${message ?? ""}`,
+              });
             }
           })}
         >
           <div className="grid w-full items-center justify-center gap-4">
             <Button
-              disabled={isLoading || isSubmitting || disabled}
+              disabled={isLoading || isSubmitting || event.status === "active"}
               type="submit"
               variant="outline"
-              className="border-md flex w-10 justify-center border-red-100 bg-red-600 p-1 text-white shadow-none hover:border-none hover:bg-red-800 hover:text-inherit hover:shadow-md md:w-48"
+              className="border-md flex w-10 justify-center border-green-100 bg-green-600 p-1 text-white shadow-none hover:border-none hover:bg-green-800 hover:text-inherit hover:shadow-md md:w-48"
             >
               {!isLoading && !isSubmitting ? (
                 <>
-                  <span className="mr-2 hidden md:block">{`Retirer le participant`}</span>
-                  <UserMinus className="h-4 w-4" />
+                  <span className="mr-2 hidden md:block">{`Publier l'évènement`}</span>
+                  <RadioTower className="h-4 w-4" />
                 </>
               ) : (
                 <Loader2 className="h-4 w-4 animate-spin" />

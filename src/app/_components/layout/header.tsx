@@ -1,8 +1,8 @@
-import React from 'react';
+import React from "react";
 
 type HeaderProps = {
-    title: string;
-    description: string | React.ReactNode;
+  title: string;
+  description: string | React.ReactNode;
 };
 
 export const Header: React.FC<HeaderProps> = ({ title, description }) => {

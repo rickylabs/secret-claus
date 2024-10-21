@@ -1,9 +1,9 @@
 import React from "react";
 
 interface IntroStepProps {
-    icon: React.ReactNode,
-    title: string,
-    description: string | React.ReactNode
+  icon: React.ReactNode;
+  title: string;
+  description: string | React.ReactNode;
 }
 export const IntroStep = ({icon, title, description}: IntroStepProps) => {
     return (

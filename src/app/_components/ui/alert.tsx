@@ -1,7 +1,7 @@
-import * as React from "react"
-import {cva, type VariantProps} from "class-variance-authority"
+import * as React from "react";
+import { cva, type VariantProps } from "class-variance-authority";
 
-import {cn} from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 const alertVariants = cva(
   "relative w-full rounded-lg px-4 py-3 text-sm [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-zinc-950 [&>svg~*]:pl-7 dark:border-zinc-800 dark:[&>svg]:text-zinc-50",
@@ -11,17 +11,16 @@ const alertVariants = cva(
         default: "bg-white text-zinc-950 dark:bg-zinc-950 dark:text-zinc-50",
         destructive:
           "border-red-500/50 text-red-500 dark:border-red-500 [&>svg]:text-red-500 dark:border-red-900/50 dark:text-red-900 dark:dark:border-red-900 dark:[&>svg]:text-red-900",
-        informative:
-            "bg-red-950 text-red-100",
-        success:
-            "bg-green-950 text-green-100",
+        informative: "bg-red-950 text-red-100",
+        success: "bg-green-950 text-green-100",
+        warning: "bg-yellow-950 text-yellow-100",
       },
     },
     defaultVariants: {
       variant: "default",
     },
-  }
-)
+  },
+);
 
 const Alert = React.forwardRef<
   HTMLDivElement,

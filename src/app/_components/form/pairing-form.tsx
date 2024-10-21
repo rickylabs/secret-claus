@@ -1,22 +1,23 @@
-"use client"
+"use client";
 import * as React from "react";
-import {Button} from "@/app/_components/ui/button"
-import {type Control, useForm} from "react-hook-form";
-import {useRouter} from "next/navigation"
-import {Form} from "@/app/_components/ui/form";
-import {Loader2} from "lucide-react";
+import { Button } from "@/app/_components/ui/button";
+import { type Control, useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import { Form } from "@/app/_components/ui/form";
+import { Loader2 } from "lucide-react";
 import * as z from "zod";
-import {zodResolver} from "@hookform/resolvers/zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import SelectField from "@/app/_components/form/fields/select-field";
-import {type Table, type Tables} from "@/server/db/supabase";
-import {toast} from "@/app/_components/ui/use-toast";
-import {generateReceiver} from "@/app/actions/update-pairing";
+import { type Table, type Tables } from "@/server/db/supabase";
+import { toast } from "@/app/_components/ui/use-toast";
+import { generateReceiver } from "@/app/actions/update-pairing";
 import PasswordField from "@/app/_components/form/fields/password-field";
+import { PairingExtended } from "@/app/events/[id]/pairing/[pairing_id]/page";
 
 export const pairingFormSchema = z.object({
-    persons: z.array(z.string()).optional(),
-    password: z.string().min(3),
-    confirmPassword: z.string().min(3).optional(),
+  persons: z.array(z.string()).optional(),
+  password: z.string().min(3),
+  confirmPassword: z.string().min(3).optional(),
 });
 
 export type PairingFormFields = z.infer<typeof pairingFormSchema>;
@@ -27,12 +28,11 @@ interface PersonItemProps {
 }
 
 export type PairingFormProps = {
-    pairing: Tables<Table.Pairing>
+    pairing: Partial<PairingExtended>
     people: PersonItemProps[]
-    allowedExclusions: number
 }
 
-export function PairingForm({pairing, people, allowedExclusions}: PairingFormProps) {
+export function PairingForm({pairing, people}: PairingFormProps) {
     const form = useForm<PairingFormFields>({
         resolver: zodResolver(pairingFormSchema),
     });
@@ -59,10 +59,10 @@ export function PairingForm({pairing, people, allowedExclusions}: PairingFormPro
                         }
                         const valid = await form.trigger();
                         if (!valid) return;
-                        if(data?.persons && data.persons.length > allowedExclusions){
+                        if(data?.persons && data.persons.length > pairing.allow_exclusion!){
                             toast({
                                 variant: "destructive",
-                                title: `Vous n'êtes pas autorisé à exclure plus de ${allowedExclusions} participant(s).`,
+                                title: `Vous n'êtes pas autorisé à exclure plus de ${pairing.allow_exclusion} participant(s).`,
                             })
                             return;
                         }
@@ -81,13 +81,13 @@ export function PairingForm({pairing, people, allowedExclusions}: PairingFormPro
                     })}
                 >
                     <div className="grid w-full justify-center items-center gap-4">
-                        <div className={allowedExclusions ? "flex flex-col space-y-1.5" : "hidden"}>
+                        <div className={pairing.allow_exclusion ? "flex flex-col space-y-1.5" : "hidden"}>
                             <SelectField
                                 control={control}
                                 name={"persons"}
                                 label={"Exclure du tirage"}
                                 placeholder={"Select persons"}
-                                description={`Vous êtes autorisé à exclure ${allowedExclusions} participant(s) du tirage.`}
+                                description={`Vous êtes autorisé à exclure ${pairing.allow_exclusion} participant(s) du tirage.`}
                                 items={people}
                                 isMulti
                             />

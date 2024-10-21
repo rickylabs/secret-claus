@@ -1,8 +1,8 @@
-import {Button} from "@/app/_components/ui/button";
+import { Button } from "@/app/_components/ui/button";
 import Link from "next/link";
-import {Card, CardHeader} from "@/app/_components/ui/card";
+import { Card, CardHeader } from "@/app/_components/ui/card";
 
-export const revalidate = 60 //revalidate the data at most: every minute
+export const revalidate = 60; //revalidate the data at most: every minute
 
 // eslint-disable-next-line @typescript-eslint/require-await
 export default async function Events() {

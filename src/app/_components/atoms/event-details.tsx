@@ -1,9 +1,9 @@
-import {Calendar, MessageCircle, ShoppingBag} from "lucide-react";
-import {type Table, type Tables} from "@/server/db/supabase";
+import { Calendar, MessageCircle, ShoppingBag } from "lucide-react";
+import { type Table, type Tables } from "@/server/db/supabase";
 
 type EventDetailsProps = {
-    event: Tables<Table.Event>
-}
+  event: Tables<Table.Event>;
+};
 
 export const EventDetails = ({event}:EventDetailsProps) => {
     const date = new Date(event.event_date).toLocaleDateString('fr-CH')

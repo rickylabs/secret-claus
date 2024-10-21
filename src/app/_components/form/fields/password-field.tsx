@@ -1,14 +1,21 @@
 import * as React from "react";
-import {type HTMLInputTypeAttribute} from "react";
-import {FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from "@/app/_components/ui/form";
-import {Input} from "@/app/_components/ui/input";
+import { type HTMLInputTypeAttribute } from "react";
+import {
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/app/_components/ui/form";
+import { Input } from "@/app/_components/ui/input";
 import IconButton from "@/app/_components/ui/icon-button";
-import {Eye, EyeOff} from "lucide-react";
-import {type DefaultFieldProps} from "@/app/_components/form/fields/input-field";
+import { Eye, EyeOff } from "lucide-react";
+import { type DefaultFieldProps } from "@/app/_components/form/fields/input-field";
 
 type PasswordFieldProps = DefaultFieldProps & {
-    type?: HTMLInputTypeAttribute
-}
+  type?: HTMLInputTypeAttribute;
+};
 const PasswordField = ({control, name, label, placeholder, description}: PasswordFieldProps) => {
     const [showPassword, setShowPassword] = React.useState<boolean>(false);
 
