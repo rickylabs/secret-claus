@@ -15,7 +15,7 @@ interface PersonListProps {
     event: Tables<"event">;
     editable?: boolean;
 }
-export async function PersonList({event, editable}: PersonListProps) {
+export async function PersonList({editable}: PersonListProps) {
     const cookieStore = cookies()
     const event_cookie = cookieStore.get('event_id')
     const { data: pairings } = await fetchPairingByEvent(event_cookie?.value)

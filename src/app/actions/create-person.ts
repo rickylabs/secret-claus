@@ -54,8 +54,6 @@ export async function createPerson(
     return;
   }
 
-  const pairing = pairingPromise.data[0] as Tables<"pairing">;
-
   revalidatePath(`/events/${event_id.value}`);
   revalidatePath(`/events/${event_id.value}/people`);
 

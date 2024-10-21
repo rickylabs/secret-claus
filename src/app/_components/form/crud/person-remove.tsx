@@ -34,7 +34,7 @@ export function PersonRemoval({
           action={form.handleSubmit(async () => {
             try {
               // Call the function to remove the person
-              const payload = await removePerson(eventId, personId);
+              await removePerson(eventId, personId);
               router.refresh();
               toast({
                 variant: "informative",

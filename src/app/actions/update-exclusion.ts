@@ -6,7 +6,7 @@ export async function updateExclusion(
   event_id: string,
   giver_id: string,
   receiver_ids: string[],
-  isBidirectional?: boolean,
+  //isBidirectional?: boolean,
 ) {
   if (!event_id) {
     throw new Error("No event found for the exclusion");

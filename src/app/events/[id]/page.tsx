@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from "@/app/_components/ui/card";
 import Link from "next/link";
-import { fetchEvent } from "@/lib/supabase";
+import {fetchEvent, fetchPairingByEvent} from "@/lib/supabase";
 import { EventDetails } from "@/app/_components/atoms/event-details";
 import { PersonList } from "@/app/_components/list/person-list";
 import { Separator } from "@/app/_components/ui/separator";
@@ -22,6 +22,7 @@ export const dynamic = "force-dynamic";
 export default async function Event({ params }: { params: { id: string } }) {
   const { data } = await fetchEvent(params?.id);
   const event: Tables<Table.Event> | undefined = data?.[0];
+  const { data: pairings } = event ?await fetchPairingByEvent(event.id) : {data:[]}
 
   return (
     <>
@@ -31,7 +32,11 @@ export default async function Event({ params }: { params: { id: string } }) {
             <CardTitle className="text-4xl font-bold text-white">
               {event.title}
             </CardTitle>
-            <CardDescription className="text-zinc-100 dark:text-zinc-200">{`Il ne vous reste plus qu'à ajouter vos convives`}</CardDescription>
+            <CardDescription className="text-zinc-100 dark:text-zinc-200">
+              {(pairings && pairings.length > 0) ?
+                  `Vous n'avez plus qu'à publier votre évènement pour pouvoir envoyer le lien a vos convives` : `Il ne vous reste plus qu'à ajouter vos convives`
+              }
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4 rounded-lg bg-white p-6">
             <EventDetails event={event} />
@@ -55,7 +60,7 @@ export default async function Event({ params }: { params: { id: string } }) {
                 <Alert variant="warning" className="mb-4">
                   <AlertCircle className="h-4 w-4" />
                   <AlertTitle>
-                    Votre évènement n'est pas encore publié !
+                    {`Votre évènement n'est pas encore publié !`}
                   </AlertTitle>
                   <AlertDescription>
                     {`Cet événement est en mode brouillon, il n'est pas encore visible par les participants. `}

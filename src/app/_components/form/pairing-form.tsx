@@ -12,7 +12,7 @@ import { type Table, type Tables } from "@/server/db/supabase";
 import { toast } from "@/app/_components/ui/use-toast";
 import { generateReceiver } from "@/app/actions/update-pairing";
 import PasswordField from "@/app/_components/form/fields/password-field";
-import { PairingExtended } from "@/app/events/[id]/pairing/[pairing_id]/page";
+import { type PairingExtended } from "@/app/events/[id]/pairing/[pairing_id]/page";
 
 export const pairingFormSchema = z.object({
   persons: z.array(z.string()).optional(),

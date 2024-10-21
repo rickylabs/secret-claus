@@ -30,7 +30,7 @@ type InputFieldProps = DefaultFieldProps & {
     type?: HTMLInputTypeAttribute
 }
 
-const InputField = ({control, name, label, placeholder, description, type, options}: InputFieldProps) => {
+const InputField = ({control, name, label, placeholder, description, type}: InputFieldProps) => {
     return (
       <FormField
           control={control}

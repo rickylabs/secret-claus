@@ -12,7 +12,7 @@ import {
   CardTitle,
 } from "@/app/_components/ui/card";
 import { Button } from "@/app/_components/ui/button";
-import {Table, type Tables} from "@/server/db/supabase";
+import {type Table, type Tables} from "@/server/db/supabase";
 import { createEvent } from "@/app/actions/create-event";
 import { Form } from "@/app/_components/ui/form";
 import TextField from "@/app/_components/form/fields/text-field";
@@ -79,7 +79,7 @@ export function EventForm({initialEvent}:EventFormProps) {
                     })
             }
         }
-    }, [event])
+    }, [event, initialEvent])
 
     if(event){
         return (
