@@ -18,113 +18,111 @@ const passwordFormSchema = z.object({
 type PasswordFormFields = z.infer<typeof passwordFormSchema>;
 
 type PasswordFormProps = {
-    pairing: Partial<PairingExtended>;
+  pairing: Partial<PairingExtended>;
 };
 
 export const PasswordForm: React.FC<PasswordFormProps> = ({ pairing }) => {
-    const form = useForm<PasswordFormFields>({
-        resolver: zodResolver(passwordFormSchema),
-    });
+  const form = useForm<PasswordFormFields>({
+    resolver: zodResolver(passwordFormSchema),
+  });
 
-    const {
-        handleSubmit,
-        formState: { isLoading, isSubmitting, isSubmitted },
-    } = form;
+  const {
+    handleSubmit,
+    formState: { isLoading, isSubmitting, isSubmitted },
+  } = form;
 
-    const control = form.control as unknown as Control
+  const control = form.control as unknown as Control;
 
-    const { isValid, checkPassword } = usePasswordContext()
+  const { isValid, checkPassword } = usePasswordContext();
 
-    React.useEffect(() => {
-        if(!isValid && isSubmitted){
-            toast({
-                variant: "destructive",
-                title: `Le mot de passe est incorrect.`,
-            })
-            return;
-        }
-    }, [isValid, isSubmitted])
-
-    if(!pairing.password){
-        return <div>Not Found</div>
+  React.useEffect(() => {
+    if (!isValid && isSubmitted) {
+      toast({
+        variant: "destructive",
+        title: `Le mot de passe est incorrect.`,
+      });
+      return;
     }
+  }, [isValid, isSubmitted]);
 
-    const onSubmit: SubmitHandler<PasswordFormFields> = ({password}) => {
-        checkPassword(password, pairing.password!);
-        return
-    }
+  if (!pairing.password) {
+    return <div>Not Found</div>;
+  }
 
-    return (
-        <Form {...form}>
-            <form
-                onSubmit={handleSubmit(onSubmit)}
-            >
-                <div className="grid w-full gap-4">
-                    <PasswordField
-                        control={control}
-                        name="password"
-                        label="Mot de passe"
-                        placeholder="Mot de passe"
-                        description="Veuillez entrer votre mot de passe pour accéder à votre invité secret."
-                    />
-                    <Button
-                        disabled={isLoading || isSubmitting}
-                        variant="outline"
-                        className="bg-green-600 hover:bg-green-800 text-white w-52"
-                        type="submit"
-                    >
-                        Submit
-                    </Button>
-                </div>
-            </form>
-        </Form>
-    );
+  const onSubmit: SubmitHandler<PasswordFormFields> = ({ password }) => {
+    checkPassword(password, pairing.password!);
+    return;
+  };
+
+  return (
+    <Form {...form}>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="grid w-full gap-4">
+          <PasswordField
+            control={control}
+            name="password"
+            label="Mot de passe"
+            placeholder="Mot de passe"
+            description="Veuillez entrer votre mot de passe pour accéder à votre invité secret."
+          />
+          <Button
+            disabled={isLoading || isSubmitting}
+            variant="outline"
+            className="w-52 bg-green-600 text-white hover:bg-green-800"
+            type="submit"
+          >
+            Submit
+          </Button>
+        </div>
+      </form>
+    </Form>
+  );
 };
 
 export const SecretGuest: React.FC<PasswordFormProps> = ({ pairing }) => {
-    const receiver = pairing.receiver
-    const { isValid , reset } = usePasswordContext()
+  const receiver = pairing.receiver;
+  const { isValid, reset } = usePasswordContext();
 
-    React.useEffect(() => {
-        if(isValid){
-            toast({
-                variant: "informative",
-                title: `Le mot de passe est correct.`,
-            })
-        }
-    }, [isValid])
-
-    if(!receiver){
-        return <div>Not Found</div>
+  React.useEffect(() => {
+    if (isValid) {
+      toast({
+        variant: "informative",
+        title: `Le mot de passe est correct.`,
+      });
     }
+  }, [isValid]);
 
-    return (
-        <>
-            <div className="flex flex-col space-y-1.5">
-                {isValid ? (
-                    <div className="flex flex-col items-center space-y-4">
-                        <div className="text-md italic text-red-950">
-                            {`Votre invité secret est:`}
-                        </div>
-                        <SantaAvatar name={receiver.name ?? "Unknown"} id={receiver.id}/>
-                        <b className="text-md text-red-950">{receiver.name}</b>
-                        <Button
-                            variant="outline"
-                            className="bg-green-600 hover:bg-green-800 text-white w-52"
-                            onClick={() => reset()}
-                        >
-                            {`C'est noté !`}
-                        </Button>
-                    </div>
-                ) : (
-                    <>
-                        <div className="text-md italic text-red-950">
-                            {`Veuillez entrer votre mot de passe pour accéder à votre invité secret.`}
-                        </div>
-                        <PasswordForm pairing={pairing}/>
-                    </>
-                )}
+  if (!receiver) {
+    return <div>Not Found</div>;
+  }
+
+  return (
+    <>
+      <div className="flex flex-col space-y-1.5">
+        {isValid ? (
+          <div className="flex flex-col items-center space-y-4">
+            <div className="text-md italic text-red-950">
+              {`Votre invité secret est:`}
             </div>
-        </>
-    )
-}
+            <SantaAvatar name={receiver.name ?? "Unknown"} id={receiver.id} />
+            <b className="text-md text-red-950">{receiver.name}</b>
+            <Button
+              variant="outline"
+              className="w-52 bg-green-600 text-white hover:bg-green-800"
+              onClick={() => reset()}
+            >
+              {`C'est noté !`}
+            </Button>
+          </div>
+        ) : (
+          <>
+            <div className="text-md italic text-red-950">
+              {`Veuillez entrer votre mot de passe pour accéder à votre invité secret.`}
+            </div>
+            <PasswordForm pairing={pairing} />
+          </>
+        )}
+      </div>
+    </>
+  );
+};

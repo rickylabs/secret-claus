@@ -1,0 +1,4 @@
+2024-10-28T10:31:19.900Z send-invite TRACE send-invite (7.1 seconds)
+2024-10-28T10:31:21.594Z send-invite TRACE Attempt 1 (5 seconds)
+2024-10-28T10:31:21.599Z send-invite INFO Hello, world!
+2024-10-28T10:31:21.602Z send-invite TRACE wait.for() (5 seconds)

@@ -1,104 +1,171 @@
-import { relations, sql } from "drizzle-orm";
 import {
-    boolean,
-    integer, pgEnum,
-    pgTable,
-    text,
-    timestamp,
-    unique,
-    uniqueIndex,
-    uuid,
+  pgTable,
+  foreignKey,
+  uuid,
+  integer,
+  text,
+  timestamp,
+  boolean,
+  pgEnum,
+  jsonb,
+  check,
 } from "drizzle-orm/pg-core";
-import { createInsertSchema } from "drizzle-zod";
-import { type z } from "zod";
+import { sql } from "drizzle-orm";
+import { type PhoneNumber } from "@/server/db/validation";
+
+export const event_status = pgEnum("event_status", [
+  "draft",
+  "active",
+  "archived",
+  "cancelled",
+]);
+export const notification_type = pgEnum("notification_type", [
+  "invite",
+  "reminder",
+  "publish",
+  "info",
+]);
+export const notification_status = pgEnum("notification_status", [
+  "pending",
+  "processing",
+  "sent",
+  "failed",
+  "cancelled",
+]);
+export const notification_mode = pgEnum("notification_mode", [
+  "link",
+  "email",
+  "sms",
+  "push",
+]);
+
+export const pairing = pgTable(
+  "pairing",
+  {
+    id: uuid().defaultRandom().primaryKey().notNull(),
+    event_id: uuid().notNull(),
+    giver_id: uuid().notNull(),
+    receiver_id: uuid(),
+    confirmed: boolean(),
+    allow_exclusion: integer().default(0).notNull(),
+    password: text(),
+    created_at: timestamp({ mode: "string" }).defaultNow().notNull(),
+    updated_at: timestamp({ mode: "string" }).defaultNow().notNull(),
+  },
+  (table) => {
+    return {
+      pairing_event_id_event_id_fk: foreignKey({
+        columns: [table.event_id],
+        foreignColumns: [event.id],
+        name: "pairing_event_id_event_id_fk",
+      }),
+      pairing_giver_id_person_id_fk: foreignKey({
+        columns: [table.giver_id],
+        foreignColumns: [person.id],
+        name: "pairing_giver_id_person_id_fk",
+      }).onDelete("cascade"),
+      pairing_receiver_id_person_id_fk: foreignKey({
+        columns: [table.receiver_id],
+        foreignColumns: [person.id],
+        name: "pairing_receiver_id_person_id_fk",
+      }).onDelete("set null"),
+    };
+  },
+);
 
 export const person = pgTable(
   "person",
   {
-    id: uuid("id").defaultRandom().primaryKey(),
-    name: text("name").notNull(),
-    email: text("email"),
-    phone_number: text("phone_number"),
-    push_subscribed: boolean("push_subscribed").notNull().default(false),
-    created_at: timestamp("created_at").defaultNow().notNull(),
-    updated_at: timestamp("updated_at").defaultNow().notNull(),
+    id: uuid().defaultRandom().primaryKey().notNull(),
+    name: text(),
+    email: text(),
+    phone_number: jsonb("phone_number").$type<PhoneNumber>(), // Type-safe JSONB
+    push_subscribed: boolean().default(false).notNull(),
+    created_at: timestamp({ mode: "string" }).defaultNow().notNull(),
+    updated_at: timestamp({ mode: "string" }).defaultNow().notNull(),
   },
-  (table) => ({
-    emailPartialIdx: uniqueIndex("email_partial_idx")
-      .on(table.email)
-      .where(sql`${table.email} IS NOT NULL`),
-    phonePartialIdx: uniqueIndex("phone_partial_idx")
-      .on(table.phone_number)
-      .where(sql`${table.phone_number} IS NOT NULL`),
-  }),
+  () => {
+    return {
+      nameRequiredCheck: check(
+        "name_required_check",
+        sql`(phone_number IS NOT NULL OR email IS NOT NULL OR name IS NOT NULL)`,
+      ),
+    };
+  },
 );
-
-// Schema for inserting a user - can be used to validate API requests
-
-export const insertPersonSchema = createInsertSchema(person);
-export type PersonFormFields = z.infer<typeof insertPersonSchema>;
-
-export const EventStatus = pgEnum('event_status', ['draft', 'active', 'archived', 'cancelled']);
-
-export const event = pgTable(
-    "event",
-    {
-        id: uuid('id').defaultRandom().primaryKey(),
-        title: text("title").notNull(),
-        message: text("message").notNull(),
-        rules: text("rules"),
-        gift_amount: integer("gift_amount").notNull(),
-        notification_mode: text("notification_mode").notNull(),
-        event_date: timestamp("event_date").notNull(),
-        status: EventStatus('status').notNull().default('draft'),
-        created_at: timestamp("created_at").defaultNow().notNull(),
-        updated_at: timestamp("updated_at").defaultNow().notNull(),
-    }
-);
-// Schema for inserting a user - can be used to validate API requests
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-call
-export const insertEventSchema = createInsertSchema(event);
-export type EventFormFields = z.infer<typeof insertEventSchema>;
 
 export const exclusion = pgTable(
-    "exclusion",
-    {
-        id: uuid('id').defaultRandom().primaryKey(),
-        event_id: uuid("event_id").references(() => event.id).notNull(),
-        person_a_id: uuid("person_a_id").references(() => person.id).notNull(),
-        person_b_id: uuid("person_b_id").references(() => person.id).notNull(),
-        isBidirectional: boolean("isBidirectional").notNull().default(false),
-    },
-    (table) => ({
-        uniqueExclusion: unique().on(table.event_id, table.person_a_id, table.person_b_id),
-    })
+  "exclusion",
+  {
+    id: uuid().defaultRandom().primaryKey().notNull(),
+    event_id: uuid().notNull(),
+    person_a_id: uuid().notNull(),
+    person_b_id: uuid().notNull(),
+    isBidirectional: boolean().default(false).notNull(),
+  },
+  (table) => {
+    return {
+      exclusion_event_id_event_id_fk: foreignKey({
+        columns: [table.event_id],
+        foreignColumns: [event.id],
+        name: "exclusion_event_id_event_id_fk",
+      }),
+      exclusion_person_a_id_person_id_fk: foreignKey({
+        columns: [table.person_a_id],
+        foreignColumns: [person.id],
+        name: "exclusion_person_a_id_person_id_fk",
+      }),
+      exclusion_person_b_id_person_id_fk: foreignKey({
+        columns: [table.person_b_id],
+        foreignColumns: [person.id],
+        name: "exclusion_person_b_id_person_id_fk",
+      }),
+    };
+  },
 );
 
-export const pairing = pgTable(
-    "pairing",
-    {
-        id: uuid('id').defaultRandom().primaryKey(),
-        event_id: uuid("event_id").notNull().references(() => event.id),
-        giver_id: uuid('giver_id').notNull().references(() => person.id, { onDelete: 'cascade' }),
-        receiver_id: uuid('receiver_id').references(() => person.id, { onDelete: 'set null' }),
-        allow_exclusion: integer("allow_exclusion").notNull().default(0),
-        password: text("password"),
-        created_at: timestamp("created_at").defaultNow().notNull(),
-        updated_at: timestamp("updated_at").defaultNow().notNull(),
-    }
-);
+export const event = pgTable("event", {
+  id: uuid().defaultRandom().primaryKey().notNull(),
+  title: text().notNull(),
+  message: text().notNull(),
+  gift_amount: integer().notNull(),
+  notification_modes: text("notification_modes").notNull().default("link"),
+  event_date: timestamp({ mode: "string" }).notNull(),
+  status: event_status("status").default("draft").notNull(),
+  guest_signup: boolean().default(false).notNull(),
+  notify_on_publish: boolean().default(false).notNull(),
+  owner_id: uuid(),
+  created_at: timestamp({ mode: "string" }).defaultNow().notNull(),
+  updated_at: timestamp({ mode: "string" }).defaultNow().notNull(),
+});
 
-export const pairingRelation = relations(pairing, ({ one }) => ({
-    giver: one(person, {
-        fields: [pairing.giver_id],
-        references: [person.id],
-    }),
-    receiver: one(person, {
-        fields: [pairing.receiver_id],
-        references: [person.id],
-    }),
-    event: one(event, {
-        fields: [pairing.event_id],
-        references: [event.id],
-    })
-}));
+export const notification = pgTable(
+  "notification",
+  {
+    id: uuid().defaultRandom().primaryKey().notNull(),
+    event_id: uuid().notNull(),
+    person_id: uuid().notNull(),
+    type: notification_type("type").notNull(),
+    email: text(),
+    phone_number: jsonb("phone_number").$type<PhoneNumber>(), // Type-safe JSONB
+    scheduled_at: timestamp({ mode: "string" }).notNull(),
+    status: notification_status("status").default("pending").notNull(),
+    sent_at: timestamp({ mode: "string" }),
+    created_at: timestamp({ mode: "string" }).defaultNow().notNull(),
+    updated_at: timestamp({ mode: "string" }).defaultNow().notNull(),
+  },
+  (table) => {
+    return {
+      notification_event_id_event_id_fk: foreignKey({
+        columns: [table.event_id],
+        foreignColumns: [event.id],
+        name: "notification_event_id_event_id_fk",
+      }),
+      notification_person_id_person_id_fk: foreignKey({
+        columns: [table.person_id],
+        foreignColumns: [person.id],
+        name: "notification_person_id_person_id_fk",
+      }),
+    };
+  },
+);

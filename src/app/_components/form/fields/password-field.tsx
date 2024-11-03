@@ -16,47 +16,49 @@ import { type DefaultFieldProps } from "@/app/_components/form/fields/input-fiel
 type PasswordFieldProps = DefaultFieldProps & {
   type?: HTMLInputTypeAttribute;
 };
-const PasswordField = ({control, name, label, placeholder, description}: PasswordFieldProps) => {
-    const [showPassword, setShowPassword] = React.useState<boolean>(false);
+const PasswordField = ({
+  control,
+  name,
+  label,
+  placeholder,
+  description,
+}: PasswordFieldProps) => {
+  const [showPassword, setShowPassword] = React.useState<boolean>(false);
 
-    return (
-        <>
-            <FormField
-                control={control}
-                name={name}
-                render={({ field }) => (
-                    <>
-                        <FormItem>
-                            {label && <FormLabel className={"text-red-500"}>{label}</FormLabel>}
-                            <div className="flex flex-row gap-1">
-                                <FormControl>
-                                    <Input
-                                        placeholder={placeholder}
-                                        {...field}
-                                        type={showPassword ? "text" : "password"}
-                                    />
-                                </FormControl>
-                                <IconButton
-                                    onClick={() => setShowPassword(!showPassword)}
-                                    variant={"outline"}
-                                    className="hover:bg-green-800 text-white p-1 flex justify-center text-green-600 w-10 md:w-20 hover:text-inherit border-md border-green-100 hover:border-none shadow-none hover:shadow-md"
-                                    startIcon={showPassword ? <EyeOff /> : <Eye />}
-                                />
-                            </div>
-                            {description &&
-                                <FormDescription>
-                                    {description}
-                                </FormDescription>
-                            }
-                            <FormMessage/>
-                        </FormItem>
-                    </>
+  return (
+    <>
+      <FormField
+        control={control}
+        name={name}
+        render={({ field }) => (
+          <>
+            <FormItem>
+              {label && (
+                <FormLabel className={"text-red-500"}>{label}</FormLabel>
+              )}
+              <div className="flex flex-row gap-1">
+                <FormControl>
+                  <Input
+                    placeholder={placeholder}
+                    {...field}
+                    type={showPassword ? "text" : "password"}
+                  />
+                </FormControl>
+                <IconButton
+                  onClick={() => setShowPassword(!showPassword)}
+                  variant={"outline"}
+                  className="border-md flex w-10 justify-center border-green-100 p-1 text-green-600 text-white shadow-none hover:border-none hover:bg-green-800 hover:text-inherit hover:shadow-md md:w-20"
+                  startIcon={showPassword ? <EyeOff /> : <Eye />}
+                />
+              </div>
+              {description && <FormDescription>{description}</FormDescription>}
+              <FormMessage />
+            </FormItem>
+          </>
+        )}
+      />
+    </>
+  );
+};
 
-                )}
-            />
-        </>
-
-  )
-}
-
-export default PasswordField
+export default PasswordField;

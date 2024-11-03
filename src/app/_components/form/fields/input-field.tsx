@@ -27,37 +27,43 @@ export interface DefaultFieldProps {
 }
 
 type InputFieldProps = DefaultFieldProps & {
-    type?: HTMLInputTypeAttribute
-}
+  type?: HTMLInputTypeAttribute;
+};
 
-const InputField = ({control, name, label, placeholder, description, type}: InputFieldProps) => {
-    return (
-      <FormField
-          control={control}
-          name={name}
-          render={({ field }) => (
-              <>
-                  <FormItem>
-                      {label && <FormLabel className={"text-red-500"}>{label}</FormLabel>}
-                      <FormControl>
-                          <Input
-                              type={type ?? "text"}
-                              placeholder={placeholder}
-                              {...field}
-                          />
-                      </FormControl>
-                      {description ?
-                          <FormDescription>
-                              {description}
-                          </FormDescription> : <p className={"hidden"}></p>
-                      }
-                      <FormMessage/>
-                  </FormItem>
-              </>
+const InputField = ({
+  control,
+  name,
+  label,
+  placeholder,
+  description,
+  type,
+}: InputFieldProps) => {
+  return (
+    <FormField
+      control={control}
+      name={name}
+      render={({ field }) => (
+        <>
+          <FormItem>
+            {label && <FormLabel className={"text-red-500"}>{label}</FormLabel>}
+            <FormControl>
+              <Input
+                type={type ?? "text"}
+                placeholder={placeholder}
+                {...field}
+              />
+            </FormControl>
+            {description ? (
+              <FormDescription>{description}</FormDescription>
+            ) : (
+              <p className={"hidden"}></p>
+            )}
+            <FormMessage />
+          </FormItem>
+        </>
+      )}
+    />
+  );
+};
 
-          )}
-      />
-  )
-}
-
-export default InputField
+export default InputField;

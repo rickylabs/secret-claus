@@ -12,7 +12,7 @@ export function PersonRemoval({
   eventId,
   personId,
   name,
-  disabled
+  disabled,
 }: {
   eventId: string;
   personId: string;

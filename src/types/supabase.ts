@@ -14,11 +14,13 @@ export type Database = {
           created_at: string
           event_date: string
           gift_amount: number
+          guest_signup: boolean
           id: string
           message: string
-          notification_mode: string
-          rules: string | null
-          status: string
+          notification_modes: string
+          notify_on_publish: boolean
+          owner_id: string | null
+          status: Database["public"]["Enums"]["event_status"]
           title: string
           updated_at: string
         }
@@ -26,11 +28,13 @@ export type Database = {
           created_at?: string
           event_date: string
           gift_amount: number
+          guest_signup?: boolean
           id?: string
           message: string
-          notification_mode: string
-          rules?: string | null
-          status?: string
+          notification_modes?: string
+          notify_on_publish?: boolean
+          owner_id?: string | null
+          status?: Database["public"]["Enums"]["event_status"]
           title: string
           updated_at?: string
         }
@@ -38,11 +42,13 @@ export type Database = {
           created_at?: string
           event_date?: string
           gift_amount?: number
+          guest_signup?: boolean
           id?: string
           message?: string
-          notification_mode?: string
-          rules?: string | null
-          status?: string
+          notification_modes?: string
+          notify_on_publish?: boolean
+          owner_id?: string | null
+          status?: Database["public"]["Enums"]["event_status"]
           title?: string
           updated_at?: string
         }
@@ -94,9 +100,67 @@ export type Database = {
           },
         ]
       }
+      notification: {
+        Row: {
+          created_at: string
+          email: string | null
+          event_id: string
+          id: string
+          person_id: string
+          phone_number: Json | null
+          scheduled_at: string
+          sent_at: string | null
+          status: Database["public"]["Enums"]["notification_status"]
+          type: Database["public"]["Enums"]["notification_type"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          event_id: string
+          id?: string
+          person_id: string
+          phone_number?: Json | null
+          scheduled_at: string
+          sent_at?: string | null
+          status?: Database["public"]["Enums"]["notification_status"]
+          type: Database["public"]["Enums"]["notification_type"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          event_id?: string
+          id?: string
+          person_id?: string
+          phone_number?: Json | null
+          scheduled_at?: string
+          sent_at?: string | null
+          status?: Database["public"]["Enums"]["notification_status"]
+          type?: Database["public"]["Enums"]["notification_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_event_id_event_id_fk"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "event"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notification_person_id_person_id_fk"
+            columns: ["person_id"]
+            isOneToOne: false
+            referencedRelation: "person"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pairing: {
         Row: {
           allow_exclusion: number
+          confirmed: boolean | null
           created_at: string
           event_id: string
           giver_id: string
@@ -107,6 +171,7 @@ export type Database = {
         }
         Insert: {
           allow_exclusion?: number
+          confirmed?: boolean | null
           created_at?: string
           event_id: string
           giver_id: string
@@ -117,6 +182,7 @@ export type Database = {
         }
         Update: {
           allow_exclusion?: number
+          confirmed?: boolean | null
           created_at?: string
           event_id?: string
           giver_id?: string
@@ -154,8 +220,8 @@ export type Database = {
           created_at: string
           email: string | null
           id: string
-          name: string
-          phone_number: string | null
+          name: string | null
+          phone_number: Json | null
           push_subscribed: boolean
           updated_at: string
         }
@@ -163,8 +229,8 @@ export type Database = {
           created_at?: string
           email?: string | null
           id?: string
-          name: string
-          phone_number?: string | null
+          name?: string | null
+          phone_number?: Json | null
           push_subscribed?: boolean
           updated_at?: string
         }
@@ -172,8 +238,8 @@ export type Database = {
           created_at?: string
           email?: string | null
           id?: string
-          name?: string
-          phone_number?: string | null
+          name?: string | null
+          phone_number?: Json | null
           push_subscribed?: boolean
           updated_at?: string
         }
@@ -188,6 +254,14 @@ export type Database = {
     }
     Enums: {
       event_status: "draft" | "active" | "archived" | "cancelled"
+      notification_mode: "link" | "email" | "sms" | "push"
+      notification_status:
+        | "pending"
+        | "processing"
+        | "sent"
+        | "failed"
+        | "cancelled"
+      notification_type: "invite" | "reminder" | "publish" | "info"
     }
     CompositeTypes: {
       [_ in never]: never

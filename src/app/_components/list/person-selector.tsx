@@ -13,33 +13,39 @@ type PersonSelectorProps = {
   disabled?: boolean;
 };
 
-export function PersonSelector({people, exclude, initial, action, disabled}: PersonSelectorProps) {
-    const router = useRouter()
+export function PersonSelector({
+  people,
+  exclude,
+  initial,
+  action,
+  disabled,
+}: PersonSelectorProps) {
+  const router = useRouter();
 
-    return (
-      <MultiSelect
-        placeholder={
-          <div className={"flex items-center space-x-2"}>
-            <span className="mr-2 hidden md:block">{`Exclure des invités`}</span>
-            <OctagonMinus className="h-4 w-4" />
-          </div>
+  return (
+    <MultiSelect
+      placeholder={
+        <div className={"flex items-center space-x-2"}>
+          <span className="text-sm md:text mr-2 hidden md:block">{`Exclure des invités`}</span>
+          <OctagonMinus className="!ml-0 h-4 w-4" />
+        </div>
+      }
+      options={people.map((person) => {
+        return {
+          label: person?.name ?? "",
+          value: person?.id ?? "",
+          disabled: !!exclude?.find((p) => p?.id === person?.id),
+        };
+      })}
+      onChange={async (list) => {
+        if (action) {
+          const validate = await action(list);
+          if (!validate) return;
+          router.refresh();
         }
-        options={people.map((person) => {
-          return {
-            label: person?.name ?? "",
-            value: person?.id ?? "",
-            disabled: !!exclude?.find((p) => p?.id === person?.id),
-          };
-        })}
-        onChange={async (list) => {
-            if(action) {
-                const validate = await action(list)
-                if(!validate) return
-                router.refresh()
-            }
-        }}
-        selected={initial ?? []}
-        disabled={people.length === 0 || disabled}
-      />
-    );
+      }}
+      selected={initial ?? []}
+      disabled={people.length === 0 || disabled}
+    />
+  );
 }

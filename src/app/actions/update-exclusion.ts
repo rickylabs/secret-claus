@@ -1,4 +1,4 @@
-"use server"
+"use server";
 import { supabase, Table } from "@/server/db/supabase";
 import { revalidatePath } from "next/cache";
 
