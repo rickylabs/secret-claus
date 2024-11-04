@@ -5,6 +5,7 @@ interface IntroStepProps {
   title: string;
   description: string | React.ReactNode;
 }
+
 export const IntroStep = ({ icon, title, description }: IntroStepProps) => {
   return (
     <div className="flex flex-col gap-8 md:flex-row">

@@ -41,17 +41,16 @@ export default async function Event({ params }: { params: { id: string } }) {
             <Link href={`/events/${event.id}`} prefetch>
               <Button className="bg-red-800 dark:bg-red-950">
                 <ArrowLeft />
-                <span className="mr-2 hidden md:block">Retour à mon évènement</span>
+                <span className="mr-2 hidden md:block">
+                  Retour à mon évènement
+                </span>
               </Button>
             </Link>
           </div>
           <CardContent className="space-y-4 rounded-lg bg-white">
             <EventDetails event={event} />
           </CardContent>
-          <CardContent
-            className="space-y-4 rounded-lg bg-white"
-            id={"list"}
-          >
+          <CardContent className="space-y-4 rounded-lg bg-white" id={"list"}>
             {event.status === "active" && (
               <Alert variant="informative" className="mb-4">
                 <AlertCircle className="h-4 w-4" />

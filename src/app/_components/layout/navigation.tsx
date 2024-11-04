@@ -14,7 +14,7 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { Table } from "@/server/db/supabase";
-import {type Tables} from "@/types/supabase";
+import { type Tables } from "@/types/supabase";
 
 interface NavigationProps {
   event?: Tables<Table.Event>;

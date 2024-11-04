@@ -26,7 +26,7 @@ export function PersonSelector({
     <MultiSelect
       placeholder={
         <div className={"flex items-center space-x-2"}>
-          <span className="text-sm md:text mr-2 hidden md:block">{`Exclure des invités`}</span>
+          <span className="md:text mr-2 hidden text-sm md:block">{`Exclure des invités`}</span>
           <OctagonMinus className="!ml-0 h-4 w-4" />
         </div>
       }

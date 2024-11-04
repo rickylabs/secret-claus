@@ -30,33 +30,33 @@ export const CountryList = ({
   }, [searchQuery]);
 
   /*return (
-        <>
-            <Input
-                placeholder="Search countries..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="h-9"
-            />
-            <ScrollArea className="h-[300px]">
-                <div>
-                    {filteredCountries.map((country) => (
-                        <Button
-                            key={country.value}
-                            value={country.value}
-                            onSelect={() => onSelect(country.value)}
-                            className="flex cursor-pointer items-center gap-2"
-                            data-selected={country.value === selectedValue}
-                        >
-                            <span>{country.flag}</span>
-                            <span className="flex-1 truncate">{country.label}</span>
-                            <span className="text-muted-foreground">{country.dialCode}</span>
-                        </Button>
-                    ))}
-                </div>
-            </ScrollArea>
-        </>
-
-    )*/
+          <>
+              <Input
+                  placeholder="Search countries..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="h-9"
+              />
+              <ScrollArea className="h-[300px]">
+                  <div>
+                      {filteredCountries.map((country) => (
+                          <Button
+                              key={country.value}
+                              value={country.value}
+                              onSelect={() => onSelect(country.value)}
+                              className="flex cursor-pointer items-center gap-2"
+                              data-selected={country.value === selectedValue}
+                          >
+                              <span>{country.flag}</span>
+                              <span className="flex-1 truncate">{country.label}</span>
+                              <span className="text-muted-foreground">{country.dialCode}</span>
+                          </Button>
+                      ))}
+                  </div>
+              </ScrollArea>
+          </>
+  
+      )*/
 
   return (
     <Command className="w-full">

@@ -1,8 +1,8 @@
 import {
   Body,
   Button,
-  Container,
   Column,
+  Container,
   Head,
   Heading,
   Hr,
@@ -10,11 +10,11 @@ import {
   Img,
   Link,
   Preview,
+  render,
   Row,
   Section,
-  Text,
   Tailwind,
-  render,
+  Text,
 } from "@react-email/components";
 import * as React from "react";
 import { z } from "zod";

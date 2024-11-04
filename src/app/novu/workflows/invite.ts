@@ -3,12 +3,12 @@ import { z } from "zod";
 import renderInvite, { INVITE_DEFAULTS } from "../emails/invite";
 import { supabase } from "@/server/db/supabase";
 import {
-  NOTIFICATION_MODE,
   type Notification,
+  NOTIFICATION_MODE,
+  type Person,
   selectEventSchema,
   selectNotificationSchema,
   selectPersonSchema,
-  type Person,
 } from "@/server/db/validation";
 
 export const inviteWorkflow = workflow(

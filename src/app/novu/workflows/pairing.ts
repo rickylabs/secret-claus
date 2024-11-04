@@ -1,19 +1,20 @@
 import { workflow } from "@novu/framework";
 import { z } from "zod";
-import {supabase, type Table} from "@/server/db/supabase";
+import { supabase, type Table } from "@/server/db/supabase";
 import {
-    NOTIFICATION_MODE,
-    type Notification,
-    selectEventSchema,
-    selectNotificationSchema,
-    selectPersonSchema,
-    type Person, selectPairingSchema,
+  type Notification,
+  NOTIFICATION_MODE,
+  type Person,
+  selectEventSchema,
+  selectNotificationSchema,
+  selectPairingSchema,
+  selectPersonSchema,
 } from "@/server/db/validation";
-import renderPairing, {PAIRING_DEFAULTS} from "../emails/pairing";
-import type {Tables} from "@/types/supabase";
+import renderPairing, { PAIRING_DEFAULTS } from "../emails/pairing";
+import type { Tables } from "@/types/supabase";
 
 type EventWithPairings = Tables<Table.Event> & {
-    pairings: Array<Tables<Table.Pairing>>
+  pairings: Array<Tables<Table.Pairing>>;
 };
 
 export const pairingWorkflow = workflow(
@@ -49,10 +50,12 @@ export const pairingWorkflow = workflow(
       async () => {
         const { data: eventPayload, error } = await supabase
           .from("event")
-          .select(`
+          .select(
+            `
             *,
             pairings:pairing (*)
-          `)
+          `,
+          )
           .eq("id", notification.event_id)
           .single<EventWithPairings>();
 
@@ -67,7 +70,7 @@ export const pairingWorkflow = workflow(
       },
       {
         outputSchema: selectEventSchema.extend({
-            pairings: selectPairingSchema.array(),
+          pairings: selectPairingSchema.array(),
         }),
       },
     );
@@ -110,7 +113,7 @@ export const pairingWorkflow = workflow(
         }
 
         return {
-            ...(personPayload as Person),
+          ...(personPayload as Person),
         };
       },
       {
@@ -119,16 +122,20 @@ export const pairingWorkflow = workflow(
       },
     );
 
-
     await step.email(
       "send-email",
       async (controls) => {
         console.log(event, controls);
         if (!person || !event) throw new Error("No person or event found");
-        const pairing = event.pairings.find((pairing) => pairing.giver_id === person.id);
-        if(process.env.NODE_ENV === "production" && !pairing) throw new Error("No pairing found for person");
+        const pairing = event.pairings.find(
+          (pairing) => pairing.giver_id === person.id,
+        );
+        if (process.env.NODE_ENV === "production" && !pairing)
+          throw new Error("No pairing found for person");
         return {
-          subject: controls.subject ?? `${owner.name} vous invite à l'évènement ${event.title} !`,
+          subject:
+            controls.subject ??
+            `${owner.name} vous invite à l'évènement ${event.title} !`,
           body: await renderPairing({
             ...PAIRING_DEFAULTS,
             owner: owner,
@@ -141,8 +148,8 @@ export const pairingWorkflow = workflow(
       {
         skip: () => !event.notification_modes.includes(NOTIFICATION_MODE.EMAIL),
         controlSchema: z.object({
-            url: z.string().optional().default(url),
-            subject: z.string().optional()
+          url: z.string().optional().default(url),
+          subject: z.string().optional(),
         }),
       },
     );
@@ -154,9 +161,12 @@ export const pairingWorkflow = workflow(
         const pairing = event.pairings.find(
           (pairing) => pairing.giver_id === person.id,
         );
-        if(process.env.NODE_ENV === "production" && !pairing) throw new Error("No pairing found for person");
+        if (process.env.NODE_ENV === "production" && !pairing)
+          throw new Error("No pairing found for person");
         return {
-          body: controls.body ?? `🎄 ${event.title} sur Secret Claus. Cliquez sur le lien pour découvrir votre invité secret 🎅: ${url}/events/${event.id}/pairing/${pairing?.id}`,
+          body:
+            controls.body ??
+            `🎄 ${event.title} sur Secret Claus. Cliquez sur le lien pour découvrir votre invité secret 🎅: ${url}/events/${event.id}/pairing/${pairing?.id}`,
         };
       },
       {

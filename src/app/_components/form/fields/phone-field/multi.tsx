@@ -1,5 +1,5 @@
 import * as React from "react";
-import { X, Plus } from "lucide-react";
+import { Plus, X } from "lucide-react";
 import { Badge } from "@/app/_components/ui/badge";
 import { Button } from "@/app/_components/ui/button";
 import {
@@ -82,7 +82,7 @@ const MultiPhoneField = ({
                       onCountryChange={(country) => {
                         setCurrentCountry(country);
                       }}
-                      onSave={(value:string) => handlePhoneAdd(value)}
+                      onSave={(value: string) => handlePhoneAdd(value)}
                     />
                   </div>
                   <Button

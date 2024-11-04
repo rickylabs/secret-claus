@@ -9,7 +9,7 @@ export default async function Events() {
   return (
     <Card className="dark:bg-grey-700/10 w-full space-y-4 rounded-lg border-none bg-white/10 p-2 pb-6 shadow-lg backdrop-blur-sm md:p-8">
       <CardHeader>
-        <div>Mes évènements: </div>
+        <div>Mes évènements:</div>
         <div>
           Veuillez vous connecter afin de pouvoir consulter vos évènements !
         </div>

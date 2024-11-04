@@ -5,7 +5,8 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardHeader, CardSubTitle,
+  CardHeader,
+  CardSubTitle,
   CardTitle,
 } from "@/app/_components/ui/card";
 import Link from "next/link";
@@ -27,7 +28,7 @@ export const dynamic = "force-dynamic";
 export default async function Event({ params }: { params: { id: string } }) {
   const { data } = await fetchEvent(params?.id);
   const event: Tables<Table.Event> | undefined = data?.[0];
-  const { data: pairings } = await fetchPairingByEvent(event?.id)
+  const { data: pairings } = await fetchPairingByEvent(event?.id);
 
   return (
     <>
@@ -125,7 +126,10 @@ export default async function Event({ params }: { params: { id: string } }) {
                   </Button>
                 )}
                 <div>
-                  <PublishEvent event={event} pairings={pairings as Tables<Table.Pairing>[]} />
+                  <PublishEvent
+                    event={event}
+                    pairings={pairings as Tables<Table.Pairing>[]}
+                  />
                 </div>
               </div>
             </div>

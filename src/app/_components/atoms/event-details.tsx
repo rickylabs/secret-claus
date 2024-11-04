@@ -1,7 +1,7 @@
 import { Calendar, MessageCircle, ShoppingBag } from "lucide-react";
 import { type Table } from "@/server/db/supabase";
 import { type Tables } from "@/types/supabase";
-import {CardSubTitle} from "@/app/_components/ui/card";
+import { CardSubTitle } from "@/app/_components/ui/card";
 
 type EventDetailsProps = {
   event: Tables<Table.Event>;
@@ -32,7 +32,7 @@ export const EventDetails = ({ event }: EventDetailsProps) => {
             </div>
             <div className="font-bold text-red-950">Message</div>
           </div>
-          <div className="text-red-950 italic">{event.message}</div>
+          <div className="italic text-red-950">{event.message}</div>
         </div>
         <div className="flex flex-col gap-2">
           <div className="flex flex-row items-center gap-2 rounded-md border border-red-950  p-2">

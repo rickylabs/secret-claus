@@ -9,10 +9,10 @@ import {
   Img,
   Link,
   Preview,
-  Section,
-  Text,
-  Tailwind,
   render,
+  Section,
+  Tailwind,
+  Text,
 } from "@react-email/components";
 import * as React from "react";
 import { z } from "zod";
@@ -60,11 +60,7 @@ export const PairingEmailSchema = z.object({
   event: selectEventSchema,
   owner: selectPersonSchema,
   guest: selectPersonSchema,
-  link: z
-    .string()
-    .url()
-    .optional()
-    .default(PAIRING_DEFAULTS.link),
+  link: z.string().url().optional().default(PAIRING_DEFAULTS.link),
   senderIp: z.string().optional(),
   senderLocation: z.string().optional(),
 });
@@ -98,7 +94,8 @@ const PairingEmail = ({
             </Section>
 
             <Heading className="mx-0 my-[30px] p-0 text-center text-[24px] font-normal text-black">
-              <strong>{event.title}: </strong><br/>
+              <strong>{event.title}: </strong>
+              <br />
               {`Découvrez votre ami secret 🎅`}
               {` sur `}
               <strong>Secret Claus</strong>

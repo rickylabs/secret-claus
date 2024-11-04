@@ -25,7 +25,8 @@ import { updateEvent } from "@/app/actions/update-event";
 import {
   type EventFormFields,
   eventValidationSchema,
-  NOTIFICATION_MODE, type PhoneNumber,
+  NOTIFICATION_MODE,
+  type PhoneNumber,
 } from "@/server/db/validation";
 import { type Tables } from "@/types/supabase";
 import MultiEmailField from "@/app/_components/form/fields/email-field";
@@ -35,8 +36,8 @@ import { phoneArraySchema } from "@/app/_components/form/fields/phone-field/sche
 import CheckboxField from "@/app/_components/form/fields/checkbox-field";
 import { z } from "zod";
 import PhoneField from "@/app/_components/form/fields/phone-field";
-import {cn} from "@/lib/utils";
-import {EventDetails} from "@/app/_components/atoms/event-details";
+import { cn } from "@/lib/utils";
+import { EventDetails } from "@/app/_components/atoms/event-details";
 
 async function retrieveCachedEvent(sessionEventId: string) {
   const { data } = await fetchEvent(sessionEventId);
@@ -92,7 +93,7 @@ export function EventForm({ initialEvent }: EventFormProps) {
   const form = useForm<EventFormFieldsExtended>({
     defaultValues: {
       notify_on_publish: true,
-      ...initialEvent
+      ...initialEvent,
     },
     resolver: (values, context, options) => {
       let schema = eventValidationSchema;
@@ -144,12 +145,16 @@ export function EventForm({ initialEvent }: EventFormProps) {
 
   //add a useEfect here to ensure we don't have email and sms mode simultaneously selected
   useEffect(() => {
-    if (notification_modes?.includes(NOTIFICATION_MODE.EMAIL) && notification_modes?.includes(NOTIFICATION_MODE.SMS)) {
+    if (
+      notification_modes?.includes(NOTIFICATION_MODE.EMAIL) &&
+      notification_modes?.includes(NOTIFICATION_MODE.SMS)
+    ) {
       form.setError("notification_modes", {
         type: "manual",
-        message: "Vous ne pouvez pas sélectionner simultanément le partage par email et sms !"
+        message:
+          "Vous ne pouvez pas sélectionner simultanément le partage par email et sms !",
       });
-      form.setValue("notification_modes", "link")
+      form.setValue("notification_modes", "link");
     }
   }, [form, notification_modes]);
 
@@ -197,20 +202,18 @@ export function EventForm({ initialEvent }: EventFormProps) {
               {event.guest_signup
                 ? `Une fois que vos invités auront confirmé leur participation, vous pourrez affiner les règles pour chaque participant et publier votre évènement pour permettre à vos invités de découvrir leur ami secret.`
                 : "La prochaine étape consiste à ajouter vos participants à votre évènement. Vous pourrez ensuite le publier pour permettre à vos invités de découvrir leur ami secret."}
-              <br/>
-              <br/>
+              <br />
+              <br />
               {`Vous souhaitez peut être créer un `}
-                <u
-                  className={
-                    "cursor-pointer font-bold"
-                  }
-                  onClick={() => {
-                    sessionStorage.removeItem("event_id");
-                    setEvent(null);
-                  }}
-                >
-                  Nouvel évènement ?
-                </u>
+              <u
+                className={"cursor-pointer font-bold"}
+                onClick={() => {
+                  sessionStorage.removeItem("event_id");
+                  setEvent(null);
+                }}
+              >
+                Nouvel évènement ?
+              </u>
             </>
           </CardDescription>
         </CardHeader>

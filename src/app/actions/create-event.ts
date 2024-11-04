@@ -4,7 +4,11 @@ import { supabase, type Table } from "@/server/db/supabase";
 import { cookies } from "next/headers";
 import { type Tables } from "@/types/supabase";
 import { type EventFormFieldsExtended } from "@/app/_components/form/event-form";
-import {NOTIFICATION_TYPE, type Person, type PhoneNumber} from "@/server/db/validation";
+import {
+  NOTIFICATION_TYPE,
+  type Person,
+  type PhoneNumber,
+} from "@/server/db/validation";
 import { createPersonWithPairing, scheduleNotification } from "@/lib/supabase";
 
 // Helper type for picking recipient fields
@@ -61,9 +65,9 @@ export async function createEvent(
     phone_number: owner_phone_number,
     allow_exclusion: 0,
     confirmed: true,
-  })
+  });
 
-  if(!owner){
+  if (!owner) {
     //delete event since we failed to create owner
     await supabase.from("event").delete().match({ id: event.id });
     throw new Error("Failed to create owner");
@@ -72,11 +76,11 @@ export async function createEvent(
   try {
     //reference owner in event
     await supabase
-        .from("event")
-        .update({
-          owner_id: owner.id,
-        })
-        .match({ id: event.id });
+      .from("event")
+      .update({
+        owner_id: owner.id,
+      })
+      .match({ id: event.id });
   } catch (error) {
     console.error(error);
     //delete event since we failed to reference owner
@@ -93,14 +97,14 @@ export async function createEvent(
   const recipientMap = new Map<string, Recipient>();
 
   // Add email recipients to map
-  recipients_email_addresses?.forEach(email => {
+  recipients_email_addresses?.forEach((email) => {
     recipientMap.set(email, { email });
   });
 
   // Merge phone recipients with existing email entries or add new ones
-  recipients_phone_numbers?.forEach(phone => {
+  recipients_phone_numbers?.forEach((phone) => {
     // Try to find matching email recipient
-    const existingEmail = recipients_email_addresses?.find(email => {
+    const existingEmail = recipients_email_addresses?.find((email) => {
       // Add your matching logic here
       // For example, if you have a way to know that an email and phone belong to the same person
       return false; // Replace with your matching logic
@@ -111,7 +115,7 @@ export async function createEvent(
       const existing = recipientMap.get(existingEmail);
       recipientMap.set(existingEmail, {
         ...existing,
-        phone_number: phone
+        phone_number: phone,
       });
     } else {
       // Add new phone-only entry
@@ -122,13 +126,13 @@ export async function createEvent(
   // Create persons and pairings
   let guests: Person[] = [];
   try {
-    const pairingPromises = Array.from(recipientMap.values()).map(recipient =>
-        createPersonWithPairing({
-          event_id: event.id,
-          email: recipient.email,
-          phone_number: recipient.phone_number,
-          confirmed: event.guest_signup ? undefined : true,
-        })
+    const pairingPromises = Array.from(recipientMap.values()).map((recipient) =>
+      createPersonWithPairing({
+        event_id: event.id,
+        email: recipient.email,
+        phone_number: recipient.phone_number,
+        confirmed: event.guest_signup ? undefined : true,
+      }),
     );
 
     guests = (await Promise.all(pairingPromises)) as Person[];
@@ -140,18 +144,21 @@ export async function createEvent(
 
   /// Create notifications directly from recipientMap
   try {
-    const notificationPromises = Array.from(recipientMap.values()).map(recipient => {
-      return scheduleNotification({
-        type: NOTIFICATION_TYPE.INVITE,
-        event_id: event.id,
-        email: recipient.email ?? null,
-        phone_number: recipient.phone_number ?? null,
-        person_id: guests.find(guest =>
-            (guest.email === recipient.email) ||
-            (guest.phone_number?.number === recipient.phone_number?.number)
-        )?.id,
-      });
-    });
+    const notificationPromises = Array.from(recipientMap.values()).map(
+      (recipient) => {
+        return scheduleNotification({
+          type: NOTIFICATION_TYPE.INVITE,
+          event_id: event.id,
+          email: recipient.email ?? null,
+          phone_number: recipient.phone_number ?? null,
+          person_id: guests.find(
+            (guest) =>
+              guest.email === recipient.email ||
+              guest.phone_number?.number === recipient.phone_number?.number,
+          )?.id,
+        });
+      },
+    );
 
     await Promise.all(notificationPromises);
   } catch (error) {

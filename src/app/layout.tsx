@@ -38,7 +38,7 @@ export default async function RootLayout({
         <TRPCReactProvider cookies={cookieStore.toString()}>
           <Navigation event={event} />
           <main className="flex min-h-screen flex-col items-center">
-            <div className="container relative z-10 flex flex-col items-center justify-center gap-6 md:gap-10 px-2 md:px-4 py-4 md:py-8">
+            <div className="container relative z-10 flex flex-col items-center justify-center gap-6 px-2 py-4 md:gap-10 md:px-4 md:py-8">
               <h1 className="text-5xl font-extrabold tracking-tight sm:text-[5rem]">
                 Secret <span className="text-red-300">Claus</span>
               </h1>

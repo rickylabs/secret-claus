@@ -1,8 +1,8 @@
 import { Column, Img, Link, Row, Section, Text } from "@react-email/components";
 
 const baseUrl = process.env.VERCEL_URL
-    ? `https://${process.env.VERCEL_URL}`
-    : "http://localhost:3000";
+  ? `https://${process.env.VERCEL_URL}`
+  : "http://localhost:3000";
 
 export const MailFooter = () => {
   return (

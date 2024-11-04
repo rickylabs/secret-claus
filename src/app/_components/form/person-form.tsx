@@ -6,19 +6,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import InputField from "@/app/_components/form/fields/input-field";
 import { Loader2 } from "lucide-react";
-import {
-  Form,
-  FormControl,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/app/_components/ui/form";
+import { Form } from "@/app/_components/ui/form";
 import CheckboxField from "@/app/_components/form/fields/checkbox-field";
 import { createPerson } from "@/app/actions/create-person";
 import { Skeleton } from "@/app/_components/ui/skeleton";
 import { Separator } from "@/app/_components/ui/separator";
 import { toast } from "@/app/_components/ui/use-toast";
-import { Checkbox } from "@/app/_components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { type Table } from "@/server/db/supabase";
 import { type Tables } from "@/types/supabase";
@@ -31,7 +24,7 @@ import {
 import PhoneField from "@/app/_components/form/fields/phone-field";
 import { z } from "zod";
 import { updatePerson } from "@/app/actions/update-person";
-import {CardSubTitle} from "@/app/_components/ui/card";
+import { CardSubTitle } from "@/app/_components/ui/card";
 
 interface PersonFormProps {
   children?: React.ReactNode;
@@ -48,7 +41,7 @@ const createValidationSchema = (event?: Tables<Table.Event>) => {
   );
 
   return insertPersonSchema.superRefine((data, ctx) => {
-    console.log(data)
+    console.log(data);
     // Validate email if email notifications are enabled
     if (hasEmailNotification && !data.email) {
       ctx.addIssue({
@@ -75,16 +68,21 @@ export function PersonForm({ children, event, person }: PersonFormProps) {
       ...person,
       phone_number: person?.phone_number
         ? (person.phone_number as PhoneNumber)
-        : undefined
+        : undefined,
     },
-    resolver: zodResolver(person ? insertPersonSchema.extend({confirmed: z.boolean().optional()}) : createValidationSchema(event)),
+    resolver: zodResolver(
+      person
+        ? insertPersonSchema.extend({ confirmed: z.boolean().optional() })
+        : createValidationSchema(event),
+    ),
   });
   const {
     formState: { isLoading, isSubmitting, errors },
   } = form;
   const router = useRouter();
   const control = form.control as unknown as Control;
-  const [showAllowExclusion, setShowAllowExclusion] = React.useState<boolean>(false);
+  const [showAllowExclusion, setShowAllowExclusion] =
+    React.useState<boolean>(false);
   const phone_number = form.watch("phone_number");
 
   console.log(phone_number, errors);
@@ -92,7 +90,12 @@ export function PersonForm({ children, event, person }: PersonFormProps) {
   return (
     <>
       <div className="grid w-full items-center gap-4">
-        <CardSubTitle className={cn("text-xl font-bold text-red-950", person ? "hidden" : "block")}>
+        <CardSubTitle
+          className={cn(
+            "text-xl font-bold text-red-950",
+            person ? "hidden" : "block",
+          )}
+        >
           Participants:
         </CardSubTitle>
         {children}
@@ -108,7 +111,12 @@ export function PersonForm({ children, event, person }: PersonFormProps) {
         {event?.status === "draft" && (
           <>
             <Separator className={cn("my-4", person ? "hidden" : "block")} />
-            <CardSubTitle className={cn("text-xl font-bold text-red-950", person ? "hidden" : "block")}>
+            <CardSubTitle
+              className={cn(
+                "text-xl font-bold text-red-950",
+                person ? "hidden" : "block",
+              )}
+            >
               Ajouter un invité:
             </CardSubTitle>
             <Form {...form}>
@@ -118,7 +126,7 @@ export function PersonForm({ children, event, person }: PersonFormProps) {
                 // @ts-ignore
                 action={form.handleSubmit(async (data) => {
                   if (isLoading || isSubmitting) return;
-                  console.log(data)
+                  console.log(data);
                   const valid = await form.trigger();
                   if (!valid) return;
                   try {
@@ -242,7 +250,9 @@ export function PersonForm({ children, event, person }: PersonFormProps) {
                     )}
                     {isLoading || isSubmitting
                       ? "Veuillez Patienter.."
-                      : person ? "Enregistrer" : "Ajouter"}
+                      : person
+                        ? "Enregistrer"
+                        : "Ajouter"}
                   </Button>
                 </div>
               </form>

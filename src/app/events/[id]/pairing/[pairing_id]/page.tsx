@@ -13,8 +13,12 @@ import { SecretGuest } from "@/app/_components/form/password-form";
 import { PasswordProvider } from "@/context/password-context";
 import { type Tables } from "@/types/supabase";
 import { type Table } from "@/server/db/supabase";
-import {AlertCircle} from "lucide-react";
-import {Alert, AlertDescription, AlertTitle} from "@/app/_components/ui/alert";
+import { AlertCircle } from "lucide-react";
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from "@/app/_components/ui/alert";
 import * as React from "react";
 
 export interface PairingExtended extends Tables<Table.Pairing> {
@@ -22,6 +26,7 @@ export interface PairingExtended extends Tables<Table.Pairing> {
   giver: Tables<Table.Person> | null;
   receiver: Tables<Table.Person> | null;
 }
+
 export default async function Pairing({
   params,
 }: {
@@ -74,7 +79,8 @@ export default async function Pairing({
           </CardTitle>
         </div>
         <CardDescription className="text-lg text-zinc-100 dark:text-zinc-200">
-          {`Vous partiez à l'évènement: `}<b>{event.title}</b>
+          {`Vous partiez à l'évènement: `}
+          <b>{event.title}</b>
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4 rounded-lg bg-white p-6">
@@ -86,12 +92,8 @@ export default async function Pairing({
             <SecretGuest pairing={pairing} />
           </PasswordProvider>
         ) : (
-
           <>
-            <Alert
-                variant="warning"
-                className="mb-4"
-            >
+            <Alert variant="warning" className="mb-4">
               <AlertCircle className="h-4 w-4" />
               <AlertTitle>
                 {`Une fois généré, votre invité secret ne pourra être consulté qu'une seule fois 🤫`}

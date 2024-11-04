@@ -9,10 +9,10 @@ import {
   Img,
   Link,
   Preview,
-  Section,
-  Text,
-  Tailwind,
   render,
+  Section,
+  Tailwind,
+  Text,
 } from "@react-email/components";
 import * as React from "react";
 import { z } from "zod";
@@ -139,9 +139,9 @@ const InviteUserEmail = ({
               <span className="text-black">{guest.name ?? guest.email}</span>.
               This invite was sent {owner ? `by ${owner.name} ` : ""} from{" "}
               <span className="text-black">{senderIp}</span> located in{" "}
-              <span className="text-black">{senderLocation}</span>. If you
-              were not expecting this invitation, you can ignore this email. If
-              you are concerned about your account safety, please reply to this
+              <span className="text-black">{senderLocation}</span>. If you were
+              not expecting this invitation, you can ignore this email. If you
+              are concerned about your account safety, please reply to this
               email to get in touch with us.
             </Text>
           </Container>

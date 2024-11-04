@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useState, useCallback, useRef } from "react";
+import { useCallback, useRef, useState } from "react";
 import {
   FormDescription,
   FormField,
@@ -28,8 +28,8 @@ const PhoneField = ({
   onSave,
 }: PhoneFieldProps) => {
   console.log(control);
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   const [formattedNumber, setFormattedNumber] = useState(
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     (control._defaultValues.phone_number?.number as string) ?? "",
   );
   const [isValid, setIsValid] = useState(true);

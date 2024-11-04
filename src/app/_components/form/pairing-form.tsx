@@ -96,8 +96,11 @@ export function PairingForm({ pairing, people }: PairingFormProps) {
                 label={"Exclure du tirage"}
                 placeholder={"Select persons"}
                 description={`Vous êtes autorisé à exclure ${pairing.allow_exclusion} participant(s) du tirage.`}
-                items={people.map (p => {
-                    return { item_value: p.item_value, item_label: p.item_label ?? "" };
+                items={people.map((p) => {
+                  return {
+                    item_value: p.item_value,
+                    item_label: p.item_label ?? "",
+                  };
                 })}
                 isMulti
               />

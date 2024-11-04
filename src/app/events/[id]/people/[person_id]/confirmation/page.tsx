@@ -46,7 +46,9 @@ export default async function Person({
         <CardDescription className="text-lg text-zinc-100 dark:text-zinc-200">
           {`Vous ${
             pairing.confirmed ? "participez" : "ne participez pas"
-          } à l'évènement:`} <br/><strong>{event.title}</strong>
+          } à l'évènement:`}{" "}
+          <br />
+          <strong>{event.title}</strong>
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4 rounded-lg bg-white p-6">

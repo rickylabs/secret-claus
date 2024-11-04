@@ -10,13 +10,21 @@ import { type Tables } from "@/types/supabase";
 import { type Table } from "@/server/db/supabase";
 import { publishEvent } from "@/app/actions/publish-event";
 
-export function   PublishEvent({ event, pairings }: { event: Tables<Table.Event>, pairings?: Tables<Table.Pairing>[]}) {
+export function PublishEvent({
+  event,
+  pairings,
+}: {
+  event: Tables<Table.Event>;
+  pairings?: Tables<Table.Pairing>[];
+}) {
   const form = useForm();
   const {
     formState: { isLoading, isSubmitting },
   } = form;
   const router = useRouter();
-  const areGuestReady = !event.guest_signup || pairings?.every((pairing) => pairing.confirmed !== null);
+  const areGuestReady =
+    !event.guest_signup ||
+    pairings?.every((pairing) => pairing.confirmed !== null);
 
   return (
     <>
@@ -50,7 +58,12 @@ export function   PublishEvent({ event, pairings }: { event: Tables<Table.Event>
         >
           <div className="grid w-full items-center justify-center gap-4">
             <Button
-              disabled={isLoading || isSubmitting || event.status === "active" || !areGuestReady}
+              disabled={
+                isLoading ||
+                isSubmitting ||
+                event.status === "active" ||
+                !areGuestReady
+              }
               type="submit"
               variant="outline"
               className="border-md flex w-10 justify-center border-green-100 bg-green-600 p-1 text-white shadow-none hover:border-none hover:bg-green-800 hover:text-inherit hover:shadow-md md:w-48"
