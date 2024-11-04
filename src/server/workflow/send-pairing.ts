@@ -44,17 +44,17 @@ export const novuSendPairing = task({
           })
           .eq("id", notification.id)
 
-      const email = notification?.email
-
-      const phone_number = notification?.phone_number?.number as unknown as string;
+      const email = notification?.email ?? undefined
+      const phone_number = notification?.phone_number?.number ?? undefined
 
       let novuResponse = null;
 
       try {
         novuResponse = await novu.trigger('send-pairing', {
           to: {
-            subscriberId: '6717948ce801ec874a73ead1',
-            email: 'info@secret-claus.com'
+            subscriberId: notification.person_id,
+            email: email,
+            phone: phone_number
           },
           payload: {
             notification_id: notification.id

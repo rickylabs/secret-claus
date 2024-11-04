@@ -2,6 +2,7 @@ import { logger, task } from "@trigger.dev/sdk/v3";
 import {supabase} from "@/server/db/supabase";
 import { Novu } from '@novu/node';
 import { env } from "@/env.mjs";
+import type {Notification} from "@/server/db/validation";
 
 const novu = new Novu(env.NOVU_SECRET_KEY);
 
@@ -18,10 +19,10 @@ export const novuSendInvite = task({
       const {data: notification, error} = await supabase.from('notification')
           .select("*")
           .eq("id", payload.notification_id)
-          .single()
+          .single<Notification | null>()
 
-      if(error) {
-        throw new Error(error.message);
+      if(error ?? !notification) {
+        throw new Error(error?.message ?? 'Notification not found');
       }
 
       logger.log("Found Notification", { notification, ctx });
@@ -39,17 +40,17 @@ export const novuSendInvite = task({
           })
           .eq("id", notification.id)
 
-      const email = notification?.email
-      // @ts-expect-error: JSONB is actually an object
-      const phone_number = notification?.phone_number?.number as unknown as string;
+      const email = notification?.email ?? undefined
+      const phone_number = notification?.phone_number?.number ?? undefined
 
       let novuResponse = null;
 
       try {
         novuResponse = await novu.trigger('send-invite', {
           to: {
-            subscriberId: '6717948ce801ec874a73ead1',
-            email: 'info@secret-claus.com'
+            subscriberId: notification.person_id,
+            email: email,
+            phone: phone_number
           },
           payload: {
             notification_id: notification.id
