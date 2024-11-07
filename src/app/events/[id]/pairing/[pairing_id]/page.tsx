@@ -79,7 +79,7 @@ export default async function Pairing({
           </CardTitle>
         </div>
         <CardDescription className="text-lg text-zinc-100 dark:text-zinc-200">
-          {`Vous partiez à l'évènement: `}
+          {`Vous participez à l'évènement: `}
           <b>{event.title}</b>
         </CardDescription>
       </CardHeader>

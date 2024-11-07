@@ -166,7 +166,7 @@ export const pairingWorkflow = workflow(
         return {
           body:
             controls.body ??
-            `🎄 ${event.title} sur Secret Claus. Cliquez sur le lien pour découvrir votre invité secret 🎅: ${url}/events/${event.id}/pairing/${pairing?.id}`,
+            `🎄 ${event.title} sur Secret Claus. Cliquez sur le lien pour découvrir votre invité secret 🎅: ${controls.url}/events/${event.id}/pairing/${pairing?.id}`,
         };
       },
       {
