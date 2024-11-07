@@ -72,8 +72,8 @@ importers:
         specifier: ^4.36.1
         version: 4.36.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@trigger.dev/sdk':
-        specifier: 3.1.1
-        version: 3.1.1
+        specifier: 3.1.2
+        version: 3.1.2
       '@trpc/client':
         specifier: ^10.44.1
         version: 10.45.2(@trpc/server@10.45.2)
@@ -1989,16 +1989,12 @@ packages:
     resolution: {integrity: sha512-Wv7ldZAqiEYF1ZCX5ukytQF+fUUsKVmyEBJ5HdzBIQhEk557qer1VVRHskGeM4e0hI2D4d3O7byI9KWCGBRofw==}
     engines: {node: '>=18.20.0'}
 
-  '@trigger.dev/core@3.1.1':
-    resolution: {integrity: sha512-xmJtPNNZHkdSQBfKAtwttj78vzdsVuxaUcE0knoeVllZcejMB8Xh8Lo0ZvdcvQ8jWsQzN82h5D555Tp0BioZig==}
-    engines: {node: '>=18.20.0'}
-
   '@trigger.dev/core@3.1.2':
     resolution: {integrity: sha512-a9kQK20zehyVuXxWm2j0st+ydmNU4SB+4Ye+rC4ZwwoTFFUb4D9p2uiEjqYrKKUAJxExj/mixgcldOlznfdJiw==}
     engines: {node: '>=18.20.0'}
 
-  '@trigger.dev/sdk@3.1.1':
-    resolution: {integrity: sha512-80hGrI9KtghwYKFgVWN0z8hQNDNLkRs7ZzIWnhgQc/aKJbtjopeJYfT61Q4G/KdY67W1J5kpN8JTc9kBEOBxmw==}
+  '@trigger.dev/sdk@3.1.2':
+    resolution: {integrity: sha512-5G1mvZgTTFHaNzXV+wL5V6o2mfCd9gyH2jTehJVGDak2PbFTcXXLYHMY+TOWG0G2eAAdUm6kCGpCZCNYiY+StQ==}
     engines: {node: '>=18.20.0'}
 
   '@trpc/client@10.45.2':
@@ -7113,37 +7109,6 @@ snapshots:
       - typescript
       - utf-8-validate
 
-  '@trigger.dev/core@3.1.1':
-    dependencies:
-      '@electric-sql/client': 0.6.3
-      '@google-cloud/precise-date': 4.0.0
-      '@jsonhero/path': 1.0.21
-      '@opentelemetry/api': 1.9.0
-      '@opentelemetry/api-logs': 0.52.1
-      '@opentelemetry/exporter-logs-otlp-http': 0.52.1(@opentelemetry/api@1.9.0)
-      '@opentelemetry/exporter-trace-otlp-http': 0.52.1(@opentelemetry/api@1.9.0)
-      '@opentelemetry/instrumentation': 0.52.1(@opentelemetry/api@1.9.0)
-      '@opentelemetry/resources': 1.25.1(@opentelemetry/api@1.9.0)
-      '@opentelemetry/sdk-logs': 0.52.1(@opentelemetry/api@1.9.0)
-      '@opentelemetry/sdk-node': 0.52.1(@opentelemetry/api@1.9.0)
-      '@opentelemetry/sdk-trace-base': 1.25.1(@opentelemetry/api@1.9.0)
-      '@opentelemetry/sdk-trace-node': 1.25.1(@opentelemetry/api@1.9.0)
-      '@opentelemetry/semantic-conventions': 1.25.1
-      dequal: 2.0.3
-      execa: 8.0.1
-      humanize-duration: 3.32.1
-      jose: 5.9.6
-      nanoid: 3.3.7
-      socket.io-client: 4.7.5
-      superjson: 2.2.1
-      zod: 3.22.3
-      zod-error: 1.5.0
-      zod-validation-error: 1.5.0(zod@3.22.3)
-    transitivePeerDependencies:
-      - bufferutil
-      - supports-color
-      - utf-8-validate
-
   '@trigger.dev/core@3.1.2':
     dependencies:
       '@electric-sql/client': 0.6.3
@@ -7175,12 +7140,12 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@trigger.dev/sdk@3.1.1':
+  '@trigger.dev/sdk@3.1.2':
     dependencies:
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/api-logs': 0.52.1
       '@opentelemetry/semantic-conventions': 1.25.1
-      '@trigger.dev/core': 3.1.1
+      '@trigger.dev/core': 3.1.2
       chalk: 5.3.0
       cronstrue: 2.51.0
       debug: 4.3.7
