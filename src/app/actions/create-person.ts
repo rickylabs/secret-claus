@@ -1,6 +1,5 @@
 "use server";
 
-import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 import {
   createPersonWithPairing,
@@ -15,10 +14,9 @@ import {
 } from "@/server/db/validation";
 
 export async function createPerson(
+  event_id: string,
   data: PersonFormFields & { allow_exclusion?: string },
 ): Promise<Tables<"person"> | void> {
-  const cookieStore = cookies();
-  const event_id = cookieStore.get("event_id");
 
   if (!event_id) {
     console.error("no event id found in cookie");
@@ -26,7 +24,7 @@ export async function createPerson(
   }
 
   try {
-    const { data: eventList } = await fetchEvent(event_id.value);
+    const { data: eventList } = await fetchEvent(event_id);
 
     const event = eventList?.[0];
     if (!event) {
@@ -35,7 +33,7 @@ export async function createPerson(
     }
 
     const person = await createPersonWithPairing({
-      event_id: event_id.value,
+      event_id: event_id,
       name: data.name ?? undefined,
       email: data.email ?? undefined,
       phone_number: data.phone_number,
@@ -75,8 +73,8 @@ export async function createPerson(
       }
     }
 
-    revalidatePath(`/events/${event_id.value}`);
-    revalidatePath(`/events/${event_id.value}/people`);
+    revalidatePath(`/events/${event_id}`);
+    revalidatePath(`/events/${event_id}/people`);
 
     return person ?? undefined;
   } catch (error) {

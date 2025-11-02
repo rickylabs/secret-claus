@@ -131,8 +131,8 @@ export function PersonForm({ children, event, person }: PersonFormProps) {
                   if (!valid) return;
                   try {
                     const payload = person
-                      ? await updatePerson(person.id, data)
-                      : await createPerson(data);
+                      ? await updatePerson(person.id, event.id, data)
+                      : await createPerson(event.id, data);
                     if (payload) {
                       router.refresh();
                       toast({
