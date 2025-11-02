@@ -3,10 +3,9 @@
 // This enables autocomplete, go to definition, etc.
 
 // Setup type definitions for built-in Supabase Runtime APIs
-import "https://esm.sh/@supabase/functions-js/src/edge-runtime.d.ts"
 import { tasks } from "npm:@trigger.dev/sdk@latest/v3";
-import {type novuSendInvite} from "@/server/workflow/send-invite.ts";
-import {type Notification} from "@/server/db/validation.ts";
+import type { novuSendInvite } from "@/server/workflow/send-invite.ts";
+import type { Notification } from "@/server/db/validation.ts";
 
 export const NOTIFICATION_TYPE = {
   INVITE: 'invite',
@@ -23,42 +22,62 @@ interface SupabaseNotificationEvent {
   old_record: Notification | null;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
 Deno.serve(async (req) => {
-  const payload = await req.json() as SupabaseNotificationEvent;
+    try {
+        const payload = await req.json();
 
-  if(payload.record.status !== "pending"){
-     return new Response(
-        JSON.stringify({status: 201, message:"No pending notification found"}),
-        { headers: { "Content-Type": "application/json" } },
-    )
-  }
+        // Add logging
+        console.log("Received payload:", JSON.stringify(payload));
+        console.log("Record status:", payload.record?.status);
+        console.log("Record type:", payload.record?.type);
 
-  try {
-    let taskType: string;
-    switch (payload.record.type) {
-      case NOTIFICATION_TYPE.INVITE:
-        taskType = "send-invite"
-        break;
-      case NOTIFICATION_TYPE.PUBLISH:
-        taskType = "send-pairing"
-        break;
-      default:
-        throw new Error("Invalid task type");
+        if (payload.record.status !== "pending") {
+            console.log("Skipping: Status is not pending");
+            return new Response(JSON.stringify({
+                status: 201,
+                message: "No pending notification found"
+            }), {
+                headers: { "Content-Type": "application/json" }
+            });
+        }
+
+        let taskType;
+        switch(payload.record.type) {
+            case NOTIFICATION_TYPE.INVITE:
+                taskType = "send-invite";
+                break;
+            case NOTIFICATION_TYPE.PUBLISH:
+                taskType = "send-pairing";
+                break;
+            default:
+                console.error("Invalid task type:", payload.record.type);
+                throw new Error(`Invalid task type: ${payload.record.type}`);
+        }
+
+        console.log("Triggering task:", taskType, "for notification:", payload.record.id);
+
+        const job = await tasks.trigger(taskType, {
+            notification_id: payload.record.id
+        });
+
+        console.log("Job triggered successfully:", JSON.stringify(job));
+
+        return new Response(JSON.stringify(job), {
+            headers: { "Content-Type": "application/json" }
+        });
+
+    } catch (error) {
+        console.error("Error in edge function:", error);
+        return new Response(JSON.stringify({
+            error: error.message,
+            stack: error.stack
+        }), {
+            status: 500,
+            headers: { "Content-Type": "application/json" }
+        });
     }
-
-    const job = await tasks.trigger<typeof novuSendInvite>(taskType, { notification_id: payload.record.id });
-
-    return new Response(
-        JSON.stringify(job),
-        { headers: { "Content-Type": "application/json" } },
-    )
-  } catch (error) {
-    return new Response(
-        JSON.stringify({ error: error }),
-        { headers: { "Content-Type": "application/json" } },
-    )
-  }
-})
+});
 
 /* To invoke locally:
 
