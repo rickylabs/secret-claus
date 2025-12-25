@@ -27,16 +27,14 @@ type PairingWithRelations = {
 
 function validatePairings(pairings: PairingWithRelations[]) {
   const receiverIds = new Set<string>();
-  const unassignedGivers: string[] = [];
 
   for (const pairing of pairings) {
-    // Check if receiver is assigned
+    // Skip validation if receiver not assigned yet (expected before publish)
     if (!pairing.receiver_id) {
-      unassignedGivers.push(pairing.giver?.name ?? pairing.giver_id);
       continue;
     }
 
-    // Check for duplicate receivers
+    // Check for duplicate receivers (only for already-assigned receivers)
     if (receiverIds.has(pairing.receiver_id)) {
       throw new Error(
         `Duplicate receiver detected: ${pairing.receiver?.name ?? pairing.receiver_id} is assigned to multiple givers`,
@@ -51,13 +49,6 @@ function validatePairings(pairings: PairingWithRelations[]) {
         `Invalid pairing: ${pairing.giver?.name ?? pairing.giver_id} is assigned as their own receiver`,
       );
     }
-  }
-
-  // Warn if some givers haven't generated their assignments yet
-  if (unassignedGivers.length > 0) {
-    throw new Error(
-      `Some participants haven't generated their secret guest assignments yet: ${unassignedGivers.join(", ")}. Please ask them to visit their pairing link before publishing.`,
-    );
   }
 }
 
