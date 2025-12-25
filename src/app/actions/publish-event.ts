@@ -32,14 +32,14 @@ function validatePairings(pairings: PairingWithRelations[]) {
   for (const pairing of pairings) {
     // Check if receiver is assigned
     if (!pairing.receiver_id) {
-      unassignedGivers.push(pairing.giver?.name || pairing.giver_id);
+      unassignedGivers.push(pairing.giver?.name ?? pairing.giver_id);
       continue;
     }
 
     // Check for duplicate receivers
     if (receiverIds.has(pairing.receiver_id)) {
       throw new Error(
-        `Duplicate receiver detected: ${pairing.receiver?.name || pairing.receiver_id} is assigned to multiple givers`,
+        `Duplicate receiver detected: ${pairing.receiver?.name ?? pairing.receiver_id} is assigned to multiple givers`,
       );
     }
 
@@ -48,7 +48,7 @@ function validatePairings(pairings: PairingWithRelations[]) {
     // Check if someone is their own receiver
     if (pairing.giver_id === pairing.receiver_id) {
       throw new Error(
-        `Invalid pairing: ${pairing.giver?.name || pairing.giver_id} is assigned as their own receiver`,
+        `Invalid pairing: ${pairing.giver?.name ?? pairing.giver_id} is assigned as their own receiver`,
       );
     }
   }
