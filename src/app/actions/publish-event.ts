@@ -17,7 +17,15 @@ type EventWithPairings = Tables<Table.Event> & {
   >;
 };
 
-function validatePairings(pairings: any[]) {
+type PairingWithRelations = {
+  id: string;
+  receiver_id: string | null;
+  giver_id: string;
+  receiver?: { name: string | null } | null;
+  giver?: { name: string | null } | null;
+};
+
+function validatePairings(pairings: PairingWithRelations[]) {
   const receiverIds = new Set<string>();
   const unassignedGivers: string[] = [];
 
@@ -30,9 +38,6 @@ function validatePairings(pairings: any[]) {
 
     // Check for duplicate receivers
     if (receiverIds.has(pairing.receiver_id)) {
-      const duplicate = pairings.find(
-        (p) => p.receiver_id === pairing.receiver_id && p.id !== pairing.id,
-      );
       throw new Error(
         `Duplicate receiver detected: ${pairing.receiver?.name || pairing.receiver_id} is assigned to multiple givers`,
       );

@@ -1,6 +1,6 @@
 import { workflow } from "@novu/framework";
 import { z } from "zod";
-import { supabase, type Table } from "@/server/db/supabase";
+import { supabase } from "@/server/db/supabase";
 import {
   type Notification,
   NOTIFICATION_MODE,

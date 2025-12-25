@@ -89,9 +89,9 @@ export function PairingForm({ pairing, people }: PairingFormProps) {
                     "Aucun participant éligible n'a été trouvé. Essayez d'exclure moins de personnes ou contactez l'organisateur de l'événement.",
                 });
               }
-            } catch (e: any) {
+            } catch (e) {
               console.error(e);
-              const errorMessage = e?.message || "Une erreur est survenue";
+              const errorMessage = e instanceof Error ? e.message : "Une erreur est survenue";
 
               // Handle specific error cases
               if (

@@ -55,16 +55,15 @@ export async function generateReceiver(
     }
   }
 
-  return processReceiverSelection(pairings || [], pairing, guests, formFields);
+  return processReceiverSelection(pairings ?? [], pairing, guests, formFields);
 }
 
 async function processReceiverSelection(
-  pairings: any[],
+  pairings: Array<{ receiver_id: string | null }>,
   pairing: Partial<PairingExtended>,
   guests: PairingFormProps["people"],
   formFields: PairingFormFields,
 ) {
-
   // Fetch exclusions for the current giver
   const { data: exclusions, error: exclusionError } = await supabase
     .from(Table.Exclusion)
@@ -91,12 +90,12 @@ async function processReceiverSelection(
 
   // Get the ids of the receivers that are already attributed to other givers
   const attributedReceivers =
-    pairings?.map((pairing_row) => pairing_row.receiver_id) || [];
+    pairings?.map((pairing_row) => pairing_row.receiver_id) ?? [];
 
   // Get the ids of the excluded persons
   const excludedPersons = [
-    ...(exclusions?.map((exclusion) => exclusion.person_b_id) || []),
-    ...(bidirectionalExclusions?.map((exclusion) => exclusion.person_a_id) ||
+    ...(exclusions?.map((exclusion) => exclusion.person_b_id) ?? []),
+    ...(bidirectionalExclusions?.map((exclusion) => exclusion.person_a_id) ??
       []),
   ];
 

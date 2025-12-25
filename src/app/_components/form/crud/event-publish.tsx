@@ -45,9 +45,9 @@ export function PublishEvent({
                 description:
                   "Les notifications ont été envoyées à tous les participants confirmés.",
               });
-            } catch (e: any) {
+            } catch (e) {
               console.error(e);
-              const message = e?.message || "Une erreur inconnue est survenue.";
+              const message = e instanceof Error ? e.message : "Une erreur inconnue est survenue.";
 
               // Handle specific validation errors
               if (message.includes("Duplicate receiver")) {
