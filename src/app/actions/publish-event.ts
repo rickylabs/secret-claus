@@ -17,6 +17,41 @@ type EventWithPairings = Tables<Table.Event> & {
   >;
 };
 
+type PairingWithRelations = {
+  id: string;
+  receiver_id: string | null;
+  giver_id: string;
+  receiver?: { name: string | null } | null;
+  giver?: { name: string | null } | null;
+};
+
+function validatePairings(pairings: PairingWithRelations[]) {
+  const receiverIds = new Set<string>();
+
+  for (const pairing of pairings) {
+    // Skip validation if receiver not assigned yet (expected before publish)
+    if (!pairing.receiver_id) {
+      continue;
+    }
+
+    // Check for duplicate receivers (only for already-assigned receivers)
+    if (receiverIds.has(pairing.receiver_id)) {
+      throw new Error(
+        `Duplicate receiver detected: ${pairing.receiver?.name ?? pairing.receiver_id} is assigned to multiple givers`,
+      );
+    }
+
+    receiverIds.add(pairing.receiver_id);
+
+    // Check if someone is their own receiver
+    if (pairing.giver_id === pairing.receiver_id) {
+      throw new Error(
+        `Invalid pairing: ${pairing.giver?.name ?? pairing.giver_id} is assigned as their own receiver`,
+      );
+    }
+  }
+}
+
 export async function publishEvent(event_id: string) {
   if (!event_id) {
     throw new Error("No event found for the exclusion");
@@ -28,7 +63,9 @@ export async function publishEvent(event_id: string) {
     throw new Error("No pairings found for the event");
   }
 
-  // Upsert exclusions with receiver_ids for current event_id and giver_id
+  // Validate pairings before publishing
+  validatePairings(pairings);
+
   const { data: event, error } = await supabase
     .from(Table.Event)
     .update({ status: "active" })

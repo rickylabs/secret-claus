@@ -1,6 +1,6 @@
 import { workflow } from "@novu/framework";
 import { z } from "zod";
-import { supabase, type Table } from "@/server/db/supabase";
+import { supabase } from "@/server/db/supabase";
 import {
   type Notification,
   NOTIFICATION_MODE,
@@ -11,11 +11,6 @@ import {
   selectPersonSchema,
 } from "@/server/db/validation";
 import renderPairing, { PAIRING_DEFAULTS } from "../emails/pairing";
-import type { Tables } from "@/types/supabase";
-
-type EventWithPairings = Tables<Table.Event> & {
-  pairings: Array<Tables<Table.Pairing>>;
-};
 
 export const pairingWorkflow = workflow(
   "send-pairing",
@@ -50,14 +45,9 @@ export const pairingWorkflow = workflow(
       async () => {
         const { data: eventPayload, error } = await supabase
           .from("event")
-          .select(
-            `
-            *,
-            pairings:pairing (*)
-          `,
-          )
+          .select("*")
           .eq("id", notification.event_id)
-          .single<EventWithPairings>();
+          .single();
 
         if (error) {
           console.log(error);
@@ -69,9 +59,31 @@ export const pairingWorkflow = workflow(
         };
       },
       {
-        outputSchema: selectEventSchema.extend({
-          pairings: selectPairingSchema.array(),
-        }),
+        outputSchema: selectEventSchema,
+      },
+    );
+
+    const pairing = await step.custom(
+      "get-pairing",
+      async () => {
+        const { data: pairingPayload, error } = await supabase
+          .from("pairing")
+          .select("*")
+          .eq("event_id", notification.event_id)
+          .eq("giver_id", person.id)
+          .single();
+
+        if (error) {
+          console.log(error);
+          throw error;
+        }
+
+        return {
+          ...pairingPayload,
+        };
+      },
+      {
+        outputSchema: selectPairingSchema,
       },
     );
 
@@ -126,22 +138,18 @@ export const pairingWorkflow = workflow(
       "send-email",
       async (controls) => {
         console.log(event, controls);
-        if (!person || !event) throw new Error("No person or event found");
-        const pairing = event.pairings.find(
-          (pairing) => pairing.giver_id === person.id,
-        );
-        if (process.env.NODE_ENV === "production" && !pairing)
-          throw new Error("No pairing found for person");
+        if (!person || !event || !pairing)
+          throw new Error("No person, event, or pairing found");
         return {
           subject:
             controls.subject ??
-            `${owner.name} vous invite à l'évènement ${event.title} !`,
+            `Découvrez votre invité secret pour ${event.title}`,
           body: await renderPairing({
             ...PAIRING_DEFAULTS,
             owner: owner,
             guest: person,
             event: event,
-            link: `${controls.url}/events/${event.id}/pairing/${pairing?.id}`,
+            link: `${controls.url}/events/${event.id}/pairing/${pairing.id}`,
           }),
         };
       },
@@ -157,16 +165,12 @@ export const pairingWorkflow = workflow(
     await step.sms(
       "send-sms",
       (controls) => {
-        if (!person || !event) throw new Error("No person or event found");
-        const pairing = event.pairings.find(
-          (pairing) => pairing.giver_id === person.id,
-        );
-        if (process.env.NODE_ENV === "production" && !pairing)
-          throw new Error("No pairing found for person");
+        if (!person || !event || !pairing)
+          throw new Error("No person, event, or pairing found");
         return {
           body:
             controls.body ??
-            `🎄 ${event.title} sur Secret Claus. Cliquez sur le lien pour découvrir votre invité secret 🎅: ${controls.url}/events/${event.id}/pairing/${pairing?.id}`,
+            `🎄 ${event.title} sur Secret Claus. Cliquez sur le lien pour découvrir votre invité secret 🎅: ${controls.url}/events/${event.id}/pairing/${pairing.id}`,
         };
       },
       {

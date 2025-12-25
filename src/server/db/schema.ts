@@ -9,6 +9,7 @@ import {
   pgEnum,
   jsonb,
   check,
+  uniqueIndex,
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 import { type PhoneNumber } from "@/server/db/validation";
@@ -69,6 +70,10 @@ export const pairing = pgTable(
         foreignColumns: [person.id],
         name: "pairing_receiver_id_person_id_fk",
       }).onDelete("set null"),
+      // Unique constraint: each person can only be a receiver once per event
+      unique_receiver_per_event: uniqueIndex("unique_receiver_per_event")
+        .on(table.event_id, table.receiver_id)
+        .where(sql`${table.receiver_id} IS NOT NULL`),
     };
   },
 );

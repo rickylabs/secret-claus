@@ -77,10 +77,47 @@ export function PairingForm({ pairing, people }: PairingFormProps) {
                 toast({
                   variant: "informative",
                   title: `Votre invité secret a été généré avec succès !`,
+                  description:
+                    "Vous pouvez maintenant découvrir qui vous allez gâter !",
+                });
+              } else {
+                // No eligible receiver found
+                toast({
+                  variant: "destructive",
+                  title: `Impossible de générer un invité secret`,
+                  description:
+                    "Aucun participant éligible n'a été trouvé. Essayez d'exclure moins de personnes ou contactez l'organisateur de l'événement.",
                 });
               }
             } catch (e) {
               console.error(e);
+              const errorMessage = e instanceof Error ? e.message : "Une erreur est survenue";
+
+              // Handle specific error cases
+              if (
+                errorMessage.includes("duplicate") ||
+                errorMessage.includes("unique constraint")
+              ) {
+                toast({
+                  variant: "destructive",
+                  title: `Assignation déjà en cours`,
+                  description:
+                    "Cette personne est déjà assignée à quelqu'un d'autre. Veuillez réessayer.",
+                });
+              } else if (errorMessage.includes("lock_not_available")) {
+                toast({
+                  variant: "destructive",
+                  title: `Veuillez patienter`,
+                  description:
+                    "Un autre participant génère son assignation. Veuillez réessayer dans quelques secondes.",
+                });
+              } else {
+                toast({
+                  variant: "destructive",
+                  title: `Erreur`,
+                  description: errorMessage,
+                });
+              }
             }
           })}
         >
