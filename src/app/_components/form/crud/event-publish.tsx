@@ -34,25 +34,49 @@ export function PublishEvent({
           // @ts-ignore
           action={form.handleSubmit(async () => {
             try {
-              // Call the function to remove the person
+              // Call the function to publish the event
               await publishEvent(event.id);
               router.refresh();
               toast({
                 variant: "informative",
                 title: event.title
                   ? `L'évènement "${event.title}" a été publié !`
-                  : "une erreur est sruvenue.",
+                  : "L'évènement a été publié !",
+                description:
+                  "Les notifications ont été envoyées à tous les participants confirmés.",
               });
-            } catch (e) {
+            } catch (e: any) {
               console.error(e);
-              // @ts-expect-error: e.message is not assignable
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-              const message = e.message;
-              toast({
-                variant: "destructive",
-                title: "Une erreur est sruvenue.",
-                description: `${message ?? ""}`,
-              });
+              const message = e?.message || "Une erreur inconnue est survenue.";
+
+              // Handle specific validation errors
+              if (message.includes("Duplicate receiver")) {
+                toast({
+                  variant: "destructive",
+                  title: "Assignations invalides",
+                  description:
+                    "Certains participants ont été assignés en double. Veuillez réinitialiser les assignations et réessayer.",
+                });
+              } else if (message.includes("haven't generated")) {
+                toast({
+                  variant: "destructive",
+                  title: "Assignations incomplètes",
+                  description: message,
+                });
+              } else if (message.includes("their own receiver")) {
+                toast({
+                  variant: "destructive",
+                  title: "Assignations invalides",
+                  description:
+                    "Un participant est assigné comme son propre invité secret. Veuillez corriger les assignations.",
+                });
+              } else {
+                toast({
+                  variant: "destructive",
+                  title: "Erreur de publication",
+                  description: message,
+                });
+              }
             }
           })}
         >

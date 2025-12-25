@@ -24,15 +24,46 @@ export async function generateReceiver(
   }
 
   // Fetch all pairings related to the event (excluding the current pairing)
-  const { data: pairings, error: fetchError } = await supabase
-    .from(Table.Pairing)
-    .select("receiver_id")
-    .eq("event_id", pairing.event_id)
-    .neq("id", pairing.id!);
+  // Use FOR UPDATE to lock rows and prevent race conditions
+  const { data: pairings, error: fetchError } = await supabase.rpc(
+    "get_pairings_for_update",
+    {
+      p_event_id: pairing.event_id,
+      p_exclude_pairing_id: pairing.id!,
+    },
+  );
 
   if (fetchError) {
-    throw fetchError;
+    // Fallback to regular query if RPC doesn't exist yet
+    const { data: fallbackPairings, error: fallbackError } = await supabase
+      .from(Table.Pairing)
+      .select("receiver_id")
+      .eq("event_id", pairing.event_id)
+      .neq("id", pairing.id!);
+
+    if (fallbackError) {
+      throw fallbackError;
+    }
+    // Use fallback data if RPC failed
+    if (!pairings && fallbackPairings) {
+      return processReceiverSelection(
+        fallbackPairings,
+        pairing,
+        guests,
+        formFields,
+      );
+    }
   }
+
+  return processReceiverSelection(pairings || [], pairing, guests, formFields);
+}
+
+async function processReceiverSelection(
+  pairings: any[],
+  pairing: Partial<PairingExtended>,
+  guests: PairingFormProps["people"],
+  formFields: PairingFormFields,
+) {
 
   // Fetch exclusions for the current giver
   const { data: exclusions, error: exclusionError } = await supabase
@@ -109,6 +140,15 @@ export async function generateReceiver(
     .eq("id", pairing.id!);
 
   if (updateError) {
+    // Handle constraint violations
+    if (
+      updateError.message?.includes("unique_receiver_per_event") ||
+      updateError.code === "23505"
+    ) {
+      throw new Error(
+        "Cette personne a déjà été assignée à un autre participant. Veuillez réessayer avec une autre sélection.",
+      );
+    }
     throw updateError;
   }
 
@@ -116,6 +156,12 @@ export async function generateReceiver(
 }
 
 export async function updatePassword(pairing_id: string, password: string) {
+  if (!password || password.length < 3) {
+    throw new Error(
+      "Le mot de passe doit contenir au moins 3 caractères.",
+    );
+  }
+
   const salt = genSaltSync(10);
   const hashedPassword = hashSync(password, salt);
 
@@ -125,6 +171,6 @@ export async function updatePassword(pairing_id: string, password: string) {
     .eq("id", pairing_id);
 
   if (error) {
-    throw error;
+    throw new Error("Erreur lors de la mise à jour du mot de passe: " + error.message);
   }
 }

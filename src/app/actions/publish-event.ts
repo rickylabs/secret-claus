@@ -17,6 +17,45 @@ type EventWithPairings = Tables<Table.Event> & {
   >;
 };
 
+function validatePairings(pairings: any[]) {
+  const receiverIds = new Set<string>();
+  const unassignedGivers: string[] = [];
+
+  for (const pairing of pairings) {
+    // Check if receiver is assigned
+    if (!pairing.receiver_id) {
+      unassignedGivers.push(pairing.giver?.name || pairing.giver_id);
+      continue;
+    }
+
+    // Check for duplicate receivers
+    if (receiverIds.has(pairing.receiver_id)) {
+      const duplicate = pairings.find(
+        (p) => p.receiver_id === pairing.receiver_id && p.id !== pairing.id,
+      );
+      throw new Error(
+        `Duplicate receiver detected: ${pairing.receiver?.name || pairing.receiver_id} is assigned to multiple givers`,
+      );
+    }
+
+    receiverIds.add(pairing.receiver_id);
+
+    // Check if someone is their own receiver
+    if (pairing.giver_id === pairing.receiver_id) {
+      throw new Error(
+        `Invalid pairing: ${pairing.giver?.name || pairing.giver_id} is assigned as their own receiver`,
+      );
+    }
+  }
+
+  // Warn if some givers haven't generated their assignments yet
+  if (unassignedGivers.length > 0) {
+    throw new Error(
+      `Some participants haven't generated their secret guest assignments yet: ${unassignedGivers.join(", ")}. Please ask them to visit their pairing link before publishing.`,
+    );
+  }
+}
+
 export async function publishEvent(event_id: string) {
   if (!event_id) {
     throw new Error("No event found for the exclusion");
@@ -28,7 +67,9 @@ export async function publishEvent(event_id: string) {
     throw new Error("No pairings found for the event");
   }
 
-  // Upsert exclusions with receiver_ids for current event_id and giver_id
+  // Validate pairings before publishing
+  validatePairings(pairings);
+
   const { data: event, error } = await supabase
     .from(Table.Event)
     .update({ status: "active" })
