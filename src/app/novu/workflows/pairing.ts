@@ -135,7 +135,7 @@ export const pairingWorkflow = workflow(
         return {
           subject:
             controls.subject ??
-            `${owner.name} vous invite à l'évènement ${event.title} !`,
+            `Découvrez votre invité secret pour ${event.title}`,
           body: await renderPairing({
             ...PAIRING_DEFAULTS,
             owner: owner,

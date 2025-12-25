@@ -23,11 +23,12 @@ export async function generateReceiver(
     throw new Error("No giver found for the pairing");
   }
 
-  // Fetch all pairings related to the event
+  // Fetch all pairings related to the event (excluding the current pairing)
   const { data: pairings, error: fetchError } = await supabase
     .from(Table.Pairing)
     .select("receiver_id")
-    .eq("event_id", pairing.event_id);
+    .eq("event_id", pairing.event_id)
+    .neq("id", pairing.id!);
 
   if (fetchError) {
     throw fetchError;
